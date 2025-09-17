@@ -1,5 +1,5 @@
 const express = require('express')
-const routes = require('./handles')
+const routes = require('/src/handles')
 
 const app = express()
 
@@ -15,6 +15,4 @@ const PORT = 8080
 app.listen(PORT, () => {
   console.log('Server running at:')
   console.log(`http://localhost:${PORT}/`)
-  console.log(`http://localhost:${PORT}/hello?name=John`)
-  console.log(`http://localhost:${PORT}/about`)
 })
