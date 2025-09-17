@@ -16,8 +16,13 @@ app.get('/', (req, res) => {
     <p><a href="/comments">See Comments</a></p>
     `)
 })
+
+app.post('/', (req,res)=>{
+  '<p><a href="/articles">See Articles</a></p>'
+  
+})
 app.use('/articles', articlesRouter)
-app.use('/comments', commentsRouter)
+app.use('/articles', commentsRouter)
 
 
 
