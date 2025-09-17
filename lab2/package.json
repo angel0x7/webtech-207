@@ -20,5 +20,8 @@
   "homepage": "https://github.com/angel0x7/webtech-207#readme",
   "devDependencies": {
     "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
