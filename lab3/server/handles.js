@@ -5,7 +5,7 @@ const path = require('path')
 const db = require('../db')
 const router = express.Router()
 
-
+// GET /
 router.get('/', (req, res) => {
   res.send(`
     <h1>Bienvenue</h1>
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
   `)
 })
 
-
+// GET /hello
 router.get('/hello', (req, res) => {//working
   const { name } = req.query
   res.send(name ? `Hello ${name}` : 'Hello Man')
@@ -29,7 +29,7 @@ router.get('/hello', (req, res) => {//working
 router.get('/GETarticles', (req, res) => {//working
   res.json(db.articles)
 });
-
+// GET /about
 router.get('/about', (req, res) => {
 
   const filePath = path.join(__dirname, '..', 'content', 'about.json')
@@ -42,7 +42,7 @@ router.get('/about', (req, res) => {
   }
 })
 
-
+// GET /articles/:id
 router.get('/articles/:id', (req, res) => {// working
   const article = db.articles.find(a => a.id === req.params.id);
   if (article) {
@@ -52,7 +52,7 @@ router.get('/articles/:id', (req, res) => {// working
   }
 });
 
-
+// POST /articles
 router.post('/articles', (req, res) => {//working
   const { title, content, author } = req.body;
   if (!title || !content || !author) {
@@ -71,24 +71,66 @@ router.post('/articles', (req, res) => {//working
 });
 
 
-router.get('/:filename', async (req, res) => {
-  const fileName = req.params.filename + '.json'
-  const filePath = path.join(__dirname, '..', 'content', fileName)
+// GET /articles/:articleId/comments
+router.get('/articles/:articleId/comments', (req, res) => {//working
+  const { articleId } = req.params;
+  const article = db.articles.find(a => a.id === articleId);
 
-  try {
-    const data = await fsPromises.readFile(filePath, 'utf8')
-
-    const obj = JSON.parse(data)
-    res.json(obj)
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      res.status(404).send('404 Not Found')
-    } else {
-      console.error(err)
-      res.status(500).send('Server error')
-    }
+  if (!article) {
+    return res.status(404).json({ error: 'Article not found' });
   }
-})
+
+  const comments = db.comments.filter(c => c.articleId === articleId);
+  res.json(comments);
+});
+
+// POST /articles/:articleId/comments
+router.post('/articles/:articleId/comments', (req, res) => {//working
+  const { articleId } = req.params;
+  const { content, author } = req.body;
+
+  const article = db.articles.find(a => a.id === articleId);
+  if (!article) {
+    return res.status(404).json({ error: 'Article not found' });
+  }
+
+  if (!content || !author) {
+    return res.status(400).json({ error: 'Content and author are required' });
+  }
+
+  const newComment = {
+    id: require('crypto').randomUUID(),
+    timestamp: Math.floor(Date.now() / 1000),
+    content,
+    articleId,
+    author
+  };
+
+  db.comments.push(newComment);
+  res.status(201).json(newComment);
+});
+
+// GET /articles/:articleId/comments/:commentId
+router.get('/articles/:articleId/comments/:commentId', (req, res) => {//working
+  const { articleId, commentId } = req.params;
+
+  const article = db.articles.find(a => a.id === articleId);
+  if (!article) {
+    return res.status(404).json({ error: 'Article not found' });
+  }
+
+  const comment = db.comments.find(
+    c => c.articleId === articleId && c.id === commentId
+  );
+
+  if (!comment) {
+    return res.status(404).json({ error: 'Comment not found for this article' });
+  }
+
+  res.json(comment);
+});
+
+
 
 
 module.exports = router
