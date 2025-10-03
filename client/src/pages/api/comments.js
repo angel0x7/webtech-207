@@ -41,7 +41,7 @@ export default function handler(req, res) {
 
   if (req.method === "POST") {    const { articleId, content, author } = req.body;
     if (!articleId || !content || !author) {
-      return res.status(400).json({ error: "Champs manquants" });
+      return res.status(400).json({ error: "Champs manquants " });
     }
 
     const newComment = {
