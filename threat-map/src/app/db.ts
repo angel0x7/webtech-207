@@ -1,0 +1,65 @@
+const db = {
+  articles: [
+    {
+      id: 'c1f7e8a2-8d12-4f11-bd72-7e0d6d9c1234',
+      title: 'Introduction à la cybersécurité',
+      content: 'La cybersécurité regroupe les pratiques destinées à protéger les systèmes, réseaux et programmes contre les attaques numériques.',
+      date: '04/10/2023',
+      author: 'Alice Dupont'
+    },
+    {
+      id: 'a9d8b7c3-3c2a-4f41-9f77-8c9f5a8d5678',
+      title: 'Les ransomwares : une menace grandissante',
+      content: 'Les ransomwares chiffrent les données des victimes et exigent une rançon pour les déverrouiller. Découvrez comment s’en protéger.',
+      date: '12/12/2023',
+      author: 'Marc Leroy'
+    },
+    {
+      id: 'b3e4c2f9-5a1b-4e7c-98c1-2f8d7a6e9123',
+      title: 'Sécurité dans le cloud',
+      content: 'Avec l’adoption massive du cloud, il devient crucial de mettre en place des mesures de sécurité robustes pour protéger les données sensibles.',
+      date: '15/01/2024',
+      author: 'Nadia Karim'
+    },
+    {
+      id: 'd7f5a2c1-6e9d-45b1-9a34-1c9f6e3b4567',
+      title: 'Le rôle de l’IA en cybersécurité',
+      content: 'L’intelligence artificielle est de plus en plus utilisée pour détecter les menaces et automatiser les réponses aux cyberattaques.',
+      date: '20/02/2024',
+      author: 'Jean Morel'
+    }
+  ],
+  comments: [
+    {
+      id: 'e1a2b3c4-d5e6-47f8-9c1a-1234567890ab',
+      timestamp: 1717435049,
+      content: 'Super article pour débuter, merci !',
+      articleId: 'c1f7e8a2-8d12-4f11-bd72-7e0d6d9c1234',
+      author: 'Paul Martin'
+    },
+    {
+      id: 'f2b3c4d5-e6f7-48a9-9b2c-0987654321cd',
+      timestamp: 1717535049,
+      content: 'Les ransomwares sont vraiment effrayants, j’ai vu une PME en être victime récemment.',
+      articleId: 'a9d8b7c3-3c2a-4f41-9f77-8c9f5a8d5678',
+      author: 'Clara Dubois'
+    },
+    {
+      id: 'g3c4d5e6-f7g8-49b0-9c3d-2345678901ef',
+      timestamp: 1717635049,
+      content: 'Très intéressant ! La sécurité du cloud est souvent négligée.',
+      articleId: 'b3e4c2f9-5a1b-4e7c-98c1-2f8d7a6e9123',
+      author: 'Olivier Bernard'
+    },
+    {
+      id: 'h4d5e6f7-g8h9-40c1-9d4e-3456789012gh',
+      timestamp: 1717735049,
+      content: 'L’IA est clairement l’avenir de la cybersécurité.',
+      articleId: 'd7f5a2c1-6e9d-45b1-9a34-1c9f6e3b4567',
+      author: 'Sophie Laurent'
+    }
+  ]
+};
+
+export default db;
+    
