@@ -13,3 +13,6 @@ Here you can find links to the different labs:
 
 ---
 Click on a lab to access its content.
+
+### Project
+The project is located in the "threat-map" folder.
