@@ -1,13 +1,3 @@
-## Authors
-
-ADDA Michaël & Velasco Angel
-
-## The project
-
-This project is a website that compiles cyber attacks around the world. It provides statistics and details on the subjects of these attacks.
-
-##
-
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
