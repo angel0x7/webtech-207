@@ -3,8 +3,8 @@ import Layout from "../components/layout";
 export default function About() {
   return (
     <Layout>
-      <h1>À propos</h1>
-      <p>Ce site est un petit blog d'articles sur la CyberSécuritéfait avec Next.js et React.</p>
+      <h1>About</h1>
+      <p>Threat Map is a website that compiles cyber attacks around the world. It provides statistics and details on the subjects of these attacks. This site is built with Next.js and React.</p>
     </Layout>
   );
 }
