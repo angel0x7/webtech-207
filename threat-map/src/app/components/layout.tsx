@@ -1,5 +1,6 @@
 import Header from "./header";
 import Footer from "./footer";
+import "../globals.css";
 
 import { ReactNode } from "react";
 
