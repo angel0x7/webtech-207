@@ -8,6 +8,9 @@ export default function Header() {
       </h1>
       <nav style={{ display: "flex", gap: "1rem", background:"#2e2d2dff", padding:"10px" }}>
         <Link href="/"><span style={{ color: "#93d2f0ff" }}>Home</span></Link>
+        <Link href="/map"><span style={{ color: "#93d2f0ff" }}>Map</span></Link>
+        <Link href="/statistics"><span style={{ color: "#93d2f0ff" }}>Statistics</span></Link>
+        <Link href="/attacks"><span style={{ color: "#93d2f0ff" }}>Attacks</span></Link>
         <Link href="/articles"><span style={{ color: "#93d2f0ff" }}>Articles</span></Link>
         <Link href="/about"><span style={{ color: "#93d2f0ff" }}>About</span></Link>
         <Link href="/contacts"><span style={{ color: "#93d2f0ff" }}>Contacts</span></Link>
