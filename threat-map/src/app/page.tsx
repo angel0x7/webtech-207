@@ -1,10 +1,13 @@
-import Layout from "./components/layout";
+import RootLayout from "./layout";
+import Layout from "./layout";
 
 export default function Home() {
   return (
-    <Layout>
-      <h1>Welcome to ThreatMap</h1>
-      <p>This is the home page</p>
-    </Layout>
+    
+      <>
+        <h1>Welcome to ThreatMap</h1>
+        <p>This is the home page</p>
+      </>
+    
   );
 }

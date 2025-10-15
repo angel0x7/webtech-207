@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Layout from "../components/layout.jsx";
+import Layout from "../layout.jsx";
 import db from "../db.js";
 
 export default function ArticleDetail() {
