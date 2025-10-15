@@ -1,9 +1,9 @@
-import Layout from "../components/layout";
+import Layout from "../layout";
 
 export default function Attacks() {
   return (
-    <Layout>
+    <>
       <h1>Attacks</h1>
-    </Layout>
+    </>
   );
 }

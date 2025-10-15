@@ -1,10 +1,10 @@
-import Layout from "../components/layout";
+import Layout from "../layout";
 import db from "../db";
 import Link from "next/link";
 
 export default function Articles() {
   return (
-    <Layout>
+    <>
       <h1>Articles sur la cybersécurité</h1>
       <ul>
         {db.articles.map(article => (
@@ -19,6 +19,6 @@ export default function Articles() {
           </li>
         ))}
       </ul>
-    </Layout>
+    </>
   );
 }
