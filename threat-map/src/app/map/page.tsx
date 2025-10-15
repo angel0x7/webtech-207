@@ -1,104 +1,60 @@
-'use client';
-import Layout from "../layout";
-import { useEffect, useState } from 'react';
+"use client";
 
-type BlacklistedIP = {
-  ipAddress: string;
-  abuseConfidenceScore: number;
-  lastReportedAt: string;
-};
+import { useEffect, useState } from "react";
 
-type BlacklistResponse = {
-  meta: {
-    generatedAt: string;
-  };
-  data: BlacklistedIP[];
-};
+interface BadHost {
+  remote_host: string;
+  count: string;
+  last_seen: string;
+}
 
-export default function Mapage() {
-  const [ips, setIps] = useState<BlacklistedIP[]>([]);
+export default function MapPage() {
+  const [badHosts, setBadHosts] = useState<BadHost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters
-  const [minScore, setMinScore] = useState(90);
-  const [search, setSearch] = useState('');
-
   useEffect(() => {
-    const fetchBlacklist = async () => {
-      try {
-        const res = await fetch(
-          `https://api.abuseipdb.com/api/v2/blacklist?confidenceMinimum=${minScore}`,
-          {
-            headers: {
-              'keys': '45dd602e3d8b497f14500edee23ee4fdfbfb138addcc42b49b4ae8de7cc94fc7d04fcaba6e2ad894',
-              Accept: 'application/json',
-            },
-          }
-        );
-        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-        const data: BlacklistResponse = await res.json();
-        setIps(data.data || []);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
+    fetch("/api/bad-hosts")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setBadHosts(data);
+        } else {
+          setError(data.error || "Erreur inconnue");
+        }
         setLoading(false);
-      }
-    };
-    fetchBlacklist();
-  }, [minScore]);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Erreur de chargement");
+        setLoading(false);
+      });
+  }, []);
 
-  const filtered = ips.filter((ip) =>
-    ip.ipAddress.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) return <p>Chargement des IPs blacklistées...</p>;
-  if (error) return <p>Erreur : {error}</p>;
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p className="text-red-500">❌ {error}</p>;
 
   return (
-      <>
-    
-        <div style={{ padding: '2rem' }}>
-          <h1>🛡️ IPs Blacklistées (AbuseIPDB)</h1>
-
-          {/* Filtres */}
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ marginRight: '0.5rem' }}>Score minimum :</label>
-            <select value={minScore} onChange={(e) => setMinScore(Number(e.target.value))}>
-              {[100, 95, 90, 85, 80, 75].map((score) => (
-                <option key={score} value={score}>
-                  {score}%
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ marginRight: '0.5rem' }}>Recherche IP :</label>
-            <input
-              type="text"
-              placeholder="Ex: 192.168..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          {/* Résultats */}
-          {filtered.length === 0 ? (
-            <p>Aucune IP trouvée.</p>
-          ) : (
-            <ul>
-              {filtered.map((ip, index) => (
-                <li key={index} style={{ marginBottom: '1rem' }}>
-                  <strong>{ip.ipAddress}</strong> — Score : {ip.abuseConfidenceScore}%
-                  <br />
-                  <em>Signalée le :</em>{' '}
-                  {new Date(ip.lastReportedAt).toLocaleString('fr-FR')}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Bad Hosts (HoneyDB)</h1>
+      <table className="min-w-full border border-gray-300 rounded-lg">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border px-4 py-2">IP</th>
+            <th className="border px-4 py-2">Nombre</th>
+            <th className="border px-4 py-2">Dernière activité</th>
+          </tr>
+        </thead>
+        <tbody>
+          {badHosts.map((host, i) => (
+            <tr key={i}>
+              <td className="border px-4 py-2">{host.remote_host}</td>
+              <td className="border px-4 py-2 text-center">{host.count}</td>
+              <td className="border px-4 py-2">{host.last_seen}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
