@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // 1. Récupère les bad hosts
+
     const res = await fetch("https://honeydb.io/api/bad-hosts", {
       headers: {
         "X-HoneyDb-ApiId": process.env.HONEYDB_API_ID!,
@@ -14,10 +14,10 @@ export async function GET() {
 
     if (!Array.isArray(data)) return NextResponse.json({ error: "Erreur HoneyDB" }, { status: 500 });
 
-    const filtered = data.filter((h: any) => Number(h.count) > 500);
+    const filtered = data.filter((h: any) => Number(h.count) > 5000);
 
-    // 2. Récupération des géolocs **en parallèle mais côté serveur**
-    const enriched = await Promise.all(
+
+    const Host = await Promise.all(
       filtered.map(async (host: any) => {
         try {
           const geoRes = await fetch(`https://honeydb.io/api/netinfo/geolocation/${host.remote_host}`, {
@@ -35,7 +35,7 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json(enriched);
+    return NextResponse.json(Host);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

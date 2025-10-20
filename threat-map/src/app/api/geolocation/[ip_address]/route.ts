@@ -18,7 +18,7 @@ interface GeoData {
   region_name: string | null;
 }
 
-interface EnrichedHost extends BadHost {
+interface Host extends BadHost {
   geo?: GeoData | null;
 }
 
@@ -43,7 +43,7 @@ export async function GET() {
     const filtered = data.filter(h => Number(h.count) > 10000);
 
 
-    const enriched: EnrichedHost[] = [];
+    const enriched: Host[] = [];
     for (const host of filtered) {
       try {
         const geoRes = await fetch(`https://honeydb.io/api/netinfo/geolocation/${host.remote_host}`, {

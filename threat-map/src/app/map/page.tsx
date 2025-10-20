@@ -19,12 +19,12 @@ interface GeoData {
   region_name: string | null;
 }
 
-interface EnrichedHost extends BadHost {
+interface Host extends BadHost {
   geo?: GeoData | null;
 }
 
 export default function MapPage() {
-  const [hosts, setHosts] = useState<EnrichedHost[]>([]);
+  const [hosts, setHosts] = useState<Host[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export default function MapPage() {
       try {
 
         const res = await fetch("/api/bad-hosts");
-        const data: EnrichedHost[] = await res.json();
+        const data: Host[] = await res.json();
 
         if (!Array.isArray(data)) {
           setError("Erreur inconnue");

@@ -1,5 +1,4 @@
-
-import Header from './components/header';
+import Navbar from './components/Navbar';
 import Footer from './components/footer';
 import './globals.css';
 
@@ -10,12 +9,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-          <Header />
+          <Navbar />
           <main style={{ flex: 1, padding: "2rem" }}>{children}</main>
           <Footer />
         </div>
       </body>
     </html>
-
   );
 }
