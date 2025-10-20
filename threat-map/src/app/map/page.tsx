@@ -8,31 +8,53 @@ interface BadHost {
   last_seen: string;
 }
 
+interface GeoData {
+  city: string | null;
+  country_iso: string | null;
+  country_name: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  postal_code: string | null;
+  region_iso: string | null;
+  region_name: string | null;
+}
+
+interface EnrichedHost extends BadHost {
+  geo?: GeoData | null;
+}
+
 export default function MapPage() {
-  const [badHosts, setBadHosts] = useState<BadHost[]>([]);
+  const [hosts, setHosts] = useState<EnrichedHost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/bad-hosts")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setBadHosts(data);
-        } else {
-          setError(data.error || "Erreur inconnue");
+    async function fetchHosts() {
+      try {
+
+        const res = await fetch("/api/bad-hosts");
+        const data: EnrichedHost[] = await res.json();
+
+        if (!Array.isArray(data)) {
+          setError("Erreur inconnue");
+          setLoading(false);
+          return;
         }
+
+        setHosts(data);
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error(err);
         setError("Erreur de chargement");
         setLoading(false);
-      });
+      }
+    }
+
+    fetchHosts();
   }, []);
 
   if (loading) return <p>Chargement...</p>;
-  if (error) return <p className="text-red-500">❌ {error}</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-6">
@@ -43,14 +65,16 @@ export default function MapPage() {
             <th className="border px-4 py-2">IP</th>
             <th className="border px-4 py-2">Nombre</th>
             <th className="border px-4 py-2">Dernière activité</th>
+            <th className="border px-4 py-2">Pays</th>
           </tr>
         </thead>
         <tbody>
-          {badHosts.map((host, i) => (
+          {hosts.map((host, i) => (
             <tr key={i}>
               <td className="border px-4 py-2">{host.remote_host}</td>
               <td className="border px-4 py-2 text-center">{host.count}</td>
               <td className="border px-4 py-2">{host.last_seen}</td>
+              <td className="border px-4 py-2">{host.geo?.country_name || "N/A"}</td>
             </tr>
           ))}
         </tbody>
