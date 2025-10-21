@@ -20,7 +20,7 @@ const Navbar: FC = () => {
         <Link href="#" className="menu-bars">
           <FaIcons.FaBars onClick={showSidebar} />
         </Link>
-        <SearchBar />
+        
       </div>
       <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
         <ul className="nav-menu-items" onClick={showSidebar}>

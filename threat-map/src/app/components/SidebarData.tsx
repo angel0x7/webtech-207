@@ -24,6 +24,12 @@ export const SidebarData: SidebarItem[] = [
     cName: "nav-text",
   },
   {
+    title: "ip Address Info",
+    path: "/ip-search",
+    icon: <FaIcons.FaSearchLocation />, 
+    cName: "nav-text",
+  },
+  {
     title: "Statistics",
     path: "/statistics",
     icon: <IoIcons.IoIosStats />,    
