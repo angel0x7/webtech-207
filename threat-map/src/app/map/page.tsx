@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import Globe3D from "./Globe";
+import StatsPanel from "../components/StatsPanel";
 interface BadHost {
   remote_host: string;
   count: string;
@@ -53,12 +54,20 @@ export default function MapPage() {
     fetchHosts();
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <div className= "center "><p>Chargement...</p></div>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Bad Hosts (HoneyDB)</h1>
+      <h1 className="text-2xl font-bold mb-4">Bad Hosts</h1>
+
+      {}
+      <div className="mb-8">
+        <Globe3D hosts={hosts} />
+      </div>
+      <StatsPanel hosts={hosts} />
+
+      {}
       <table className="min-w-full border border-gray-300 rounded-lg">
         <thead className="bg-gray-100">
           <tr>
