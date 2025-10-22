@@ -1,25 +1,12 @@
-<<<<<<< HEAD
-import RootLayout from "./layout";
-import Layout from "./layout";
-=======
 "use client";
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
->>>>>>> 5f6366d3903a86b27bf6a534328a07e9e9a18e0b
 
 export default function Home() {
   const router = useRouter();
 
   return (
-<<<<<<< HEAD
-    
-      <>
-        <h1>Welcome to ThreatMap</h1>
-        <p>This is the home page</p>
-      </>
-    
-=======
     <main className="min-h-screen w-full bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white overflow-y-auto">
       
       <section className="flex flex-col items-center justify-center text-center min-h-[100vh] px-6 pt-28">
@@ -93,6 +80,5 @@ export default function Home() {
 
       
     </main>
->>>>>>> 5f6366d3903a86b27bf6a534328a07e9e9a18e0b
   );
 }

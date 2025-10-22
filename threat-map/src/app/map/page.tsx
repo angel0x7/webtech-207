@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+
 import Layout from "../layout";
-=======
+
 "use client";
->>>>>>> 5f6366d3903a86b27bf6a534328a07e9e9a18e0b
+
 
 import { useEffect, useState } from "react";
 import Globe3D from "./Globe";
