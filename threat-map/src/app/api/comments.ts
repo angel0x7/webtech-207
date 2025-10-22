@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 
-let comments = [
+const comments = [
    {
       id: 'e1a2b3c4-d5e6-47f8-9c1a-1234567890ab',
       timestamp: 1717435049,
