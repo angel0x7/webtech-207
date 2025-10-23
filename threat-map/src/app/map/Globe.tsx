@@ -60,7 +60,7 @@ export default function Globe({ hosts }: { hosts: Host[] }) {
             controls.target.set(0, 0, 0);
             controls.update();
 
-            // Création du globe
+            globeObjRef.current = new ThreeGlobe();
             const globe = new (ThreeGlobe as any)()
                 .globeImageUrl("//unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
                 .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png")
@@ -111,7 +111,6 @@ export default function Globe({ hosts }: { hosts: Host[] }) {
     }, []);
 
 
-    // Update points when hosts change
     useEffect(() => {
         const globe = globeObjRef.current;
         if (!globe) return;
