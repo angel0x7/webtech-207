@@ -7,6 +7,7 @@ import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import { SidebarData, SidebarItem } from "./SidebarData";
 import "./Navbar.css";
+import Logo from './Logo';
 import SearchBar from './SearchBar';
 const Navbar: FC = () => {
   const [sidebar, setSidebar] = useState(false);
@@ -20,6 +21,7 @@ const Navbar: FC = () => {
         <Link href="#" className="menu-bars">
           <FaIcons.FaBars onClick={showSidebar} />
         </Link>
+        <Logo />
         
       </div>
       <nav className={sidebar ? "nav-menu active" : "nav-menu"}>

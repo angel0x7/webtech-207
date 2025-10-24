@@ -2,6 +2,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/footer';
 import LoginButton from './components/loginBoton';
 import SettingsButton from './components/SettingsButton';
+
 import './globals.css';
 
 import { ReactNode } from 'react';
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Navbar />
           <LoginButton />
           <SettingsButton />
+          
           
           <main style={{ flex: 1, padding: "2rem" }}>{children}</main>
           <Footer />
