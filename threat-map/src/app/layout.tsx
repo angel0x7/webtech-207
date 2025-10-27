@@ -1,21 +1,22 @@
+import Navbar from './components/Navbar';
+import Footer from './components/footer';
+import LoginButton from './components/loginBoton';
+import SettingsButton from './components/SettingsButton';
 
-import "./globals.css";
-import Header from "./components/header";
-import Footer from "./components/footer";
-import { ReactNode } from "react";
-import type { Metadata } from "next";
+import './globals.css';
 
-export const metadata: Metadata = {
-  title: "Threat Map",
-  description: "Visualisation des attaques avec Shodan",
-};
+import { ReactNode } from 'react';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-          <Header />
+          <Navbar />
+          <LoginButton />
+          <SettingsButton />
+          
+          
           <main style={{ flex: 1, padding: "2rem" }}>{children}</main>
           <Footer />
         </div>

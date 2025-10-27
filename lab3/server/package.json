@@ -1,0 +1,28 @@
+{
+  "name": "webtech-207",
+  "version": "1.0.0",
+  "description": "**Cours:  Technologies Web** Depository Tech_Web Angel Velasco Michael Adda",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angel0x7/webtech-207.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angel0x7/webtech-207/issues"
+  },
+  "homepage": "https://github.com/angel0x7/webtech-207#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

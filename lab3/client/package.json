@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "lab4",
-=======
-  "name": "client",
->>>>>>> 5311977aa5a721bdd800946cf4200068a04d7088
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,12 +8,6 @@
     "start": "next start",
     "lint": "eslint"
   },
-<<<<<<< HEAD
-=======
-  "author":"Michaël ADDA",
-  "contributors":"Angel Velasco",
-  
->>>>>>> 5311977aa5a721bdd800946cf4200068a04d7088
   "dependencies": {
     "react": "19.1.0",
     "react-dom": "19.1.0",

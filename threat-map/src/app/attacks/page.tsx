@@ -1,112 +1,262 @@
 "use client";
-
 import { useEffect, useState } from "react";
-
-type Indicator = {
-  indicator: string;
-  type: string;
-  title?: string;
-};
 
 type Pulse = {
   id: string;
   name: string;
   description: string;
   tags: string[];
-  indicators: Indicator[];
+  author_name: string;
+  created: string;
 };
 
-export default function AttacksPage() {
-  const [pulses, setPulses] = useState<Pulse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type CVE = {
+  id: string;
+  summary: string;
+  published?: string;
+};
 
-  // Filters
-  const [category, setCategory] = useState("All");
-  const [search, setSearch] = useState("");
+export default function ThreatsPage() {
+  const [otx, setOtx] = useState<Pulse[]>([]);
+  const [circl, setCircl] = useState<CVE[]>([]);
+  const [kev, setKev] = useState<CVE[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeSource, setActiveSource] = useState<"otx" | "circl" | "kev" | null>(null);
 
   useEffect(() => {
-    const fetchPulses = async () => {
+    const fetchAll = async () => {
       try {
-        const res = await fetch("https://otx.alienvault.com/api/v1/pulses/activity", {
+        // AlienVault OTX
+        const otxRes = await fetch("https://otx.alienvault.com/api/v1/pulses/activity", {
           headers: {
             "X-OTX-API-KEY": process.env.NEXT_PUBLIC_OTX_KEY as string,
           },
         });
-        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-        const data = await res.json();
-        setPulses(data.results || []);
-      } catch (err: any) {
-        setError(err.message);
+        const otxData = await otxRes.json();
+        setOtx(otxData.results || []);
+
+        // CIRCL CVE
+        const circlRes = await fetch("/api/circl");
+        const circlData = await circlRes.json();
+        setCircl(
+          circlData.map((c: any) => ({
+            id: c.cveMetadata?.cveId,
+            vendor: c.cveMetadata?.assignerShortName || c.containers?.cna?.providerMetadata?.shortName,
+            title: c.containers?.adp?.[0]?.title || c.containers?.cna?.descriptions?.[0]?.value,
+            description: c.containers?.cna?.descriptions?.[0]?.value,
+            cwe: c.containers?.cna?.problemTypes?.[0]?.descriptions?.[0]?.description,
+            cvss: c.containers?.cna?.metrics?.[0]?.cvssV3_1?.baseScore,
+            severity: c.containers?.cna?.metrics?.[0]?.cvssV3_1?.baseSeverity,
+            references: c.containers?.cna?.references || [],
+          }))
+        );
+
+
+        const kevRes = await fetch("/api/kev");
+        const kevData = await kevRes.json();
+
+        setKev(
+          (kevData || []).map((v: any) => ({
+            id: v.cveID,
+            title: v.vulnerabilityName,
+            vendor: v.vendorProject,
+            product: v.product,
+            dateAdded: v.dateAdded,
+            requiredAction: v.requiredAction,
+            notes: v.notes,
+          }))
+        );
+
+      } catch (err) {
+        console.error("Error fetching APIs:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchPulses();
+    fetchAll();
   }, []);
 
-  // Extract unique tags from pulses for category filter
-  const categories = ["All", ...new Set(pulses.flatMap((p) => p.tags))];
+  if (loading) return <p>Loading threat data...</p>;
 
-  // Apply filters
-  const filtered = pulses.filter((p) => {
-    const matchesCategory = category === "All" || p.tags.includes(category);
-    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  if (loading) return <p>Loading threat intelligence...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Threat Intelligence (AlienVault OTX)</h1>
-
-      {/* Filters */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ marginRight: "0.5rem" }}>Filter by category:</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {categories.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ marginRight: "0.5rem" }}>Search by name:</label>
-        <input
-          type="text"
-          placeholder="Type to search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      {/* Results */}
-      {filtered.length === 0 ? (
-        <p>No results found.</p>
-      ) : (
+  const renderContent = () => {
+    if (activeSource === "otx") {
+      return (
         <ul>
-          {filtered.map((p) => (
-            <li key={p.id} style={{ marginBottom: "1rem" }}>
+          {otx.map((p, idx) => (
+            <li key={`${p.id || "otx"}-${idx}`}>
               <strong>{p.name}</strong> — {p.description}
-              <br />
-              <em>Tags:</em> {p.tags.join(", ")}
-              <br />
-              <details>
-                <summary>Indicators</summary>
-                <ul>
-                  {p.indicators.map((i, idx) => (
-                    <li key={idx}>
-                      {i.type}: {i.indicator} {i.title ? `(${i.title})` : ""}
-                    </li>
-                  ))}
-                </ul>
-              </details>
             </li>
           ))}
         </ul>
-      )}
+      );
+    }
+    if (activeSource === "circl") {
+      return (
+        <ul>
+
+          {circl.map((cve: any, idx: number) => (
+            <li key={`${cve.id || idx}`} style={{ marginBottom: "1rem" }}>
+              {/* CVE ID */}
+              {cve.id && (
+                <>
+                  <strong>{cve.id}</strong>
+                  <br />
+                </>
+              )}
+
+              {/* Title */}
+              {cve.title && (
+                <>
+                  <em>Title:</em> {cve.title}
+                  <br />
+                </>
+              )}
+
+              {/* Vendor */}
+              {cve.vendor && (
+                <>
+                  <em>Vendor:</em> {cve.vendor}
+                  <br />
+                </>
+              )}
+
+              {/* Description */}
+              {cve.description && <p>{cve.description}</p>}
+
+              {/* CWE */}
+              {cve.cwe && (
+                <p>
+                  <em>CWE:</em> {cve.cwe}
+                </p>
+              )}
+
+              {/* CVSS */}
+              {cve.cvss && (
+                <p>
+                  <em>CVSS:</em>{" "}
+                  <span
+                    style={{
+                      color: cve.cvss >= 7 ? "red" : cve.cvss >= 4 ? "orange" : "green",
+                    }}
+                  >
+                    {cve.cvss}
+                  </span>{" "}
+                  ({cve.severity})
+                </p>
+              )}
+
+              {/* References */}
+              {cve.references && cve.references.length > 0 && (
+                <div>
+                  <em>References:</em>
+                  <ul>
+                    {cve.references.map((ref: any, rIdx: number) => (
+                      <li key={`ref-${idx}-${rIdx}`}>
+                        <a href={ref.url || ref} target="_blank" rel="noopener noreferrer">
+                          {ref.url || ref}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          ))}
+
+
+
+
+
+
+        </ul>
+      );
+    }
+    if (activeSource === "kev") {
+      return (
+        <ul>
+          {kev.map((v: any, idx: number) => (
+            <li key={`${v.cveID}-${idx}`} style={{ marginBottom: "1rem" }}>
+              <strong>{v.cveID}</strong> — {v.vulnerabilityName}
+              <br />
+              {v.vendorProject && (
+                <>
+                  <em>Vendor:</em> {v.vendorProject} | <em>Product:</em> {v.product}
+                  <br />
+                </>
+              )}
+              {v.dateAdded && (
+                <p>
+                  <em>Date Added:</em> {v.dateAdded}
+                </p>
+              )}
+              {v.requiredAction && (
+                <p>
+                  <em>Required Action:</em> {v.requiredAction}
+                </p>
+              )}
+              {v.notes && (
+                <a href={v.notes} target="_blank" rel="noopener noreferrer">
+                  More info
+                </a>
+              )}
+            </li>
+          ))}
+
+        </ul>
+      );
+    }
+    return <p>Select a source above to view data.</p>;
+  };
+
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Threat Intelligence Sources</h1>
+
+      {/* Source selector */}
+      <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+        <div
+          onClick={() => setActiveSource("otx")}
+          style={{
+            flex: 1,
+            padding: "1rem",
+            border: "2px solid #333",
+            cursor: "pointer",
+            background: activeSource === "otx" ? "#eee" : "#fff",
+            textAlign: "center",
+          }}
+        >
+          AlienVault OTX
+        </div>
+        <div
+          onClick={() => setActiveSource("circl")}
+          style={{
+            flex: 1,
+            padding: "1rem",
+            border: "2px solid #333",
+            cursor: "pointer",
+            background: activeSource === "circl" ? "#eee" : "#fff",
+            textAlign: "center",
+          }}
+        >
+          CIRCL CVE
+        </div>
+        <div
+          onClick={() => setActiveSource("kev")}
+          style={{
+            flex: 1,
+            padding: "1rem",
+            border: "2px solid #333",
+            cursor: "pointer",
+            background: activeSource === "kev" ? "#eee" : "#fff",
+            textAlign: "center",
+          }}
+        >
+          KEV
+        </div>
+      </div>
+
+      {/* Data display */}
+      {renderContent()}
     </div>
   );
 }
