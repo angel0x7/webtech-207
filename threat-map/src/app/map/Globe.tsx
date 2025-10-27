@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// @ts-ignore
+// @ts-expect-error
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 

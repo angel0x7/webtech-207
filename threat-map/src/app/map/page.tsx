@@ -3,7 +3,7 @@
 
 "use client";
 
-
+  import Image from "next/image";
 import { useEffect, useState } from "react";
 import Globe3D from "./Globe";
 import StatsPanel from "../components/StatsPanel";
@@ -59,19 +59,23 @@ export default function MapPage() {
   }, []);
 
 
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0b0d2b] text-gray-200">
-        <img
-          src="/honeyblog.png" 
-          alt="Chargement"
-          className="w-40 h-24 mb-4 animate-pulse"
-        />
-        <p className="text-lg font-medium text-blue-400 animate-pulse">
-          Chargement des données...
-        </p>
-      </div>
-    );
+
+
+if (loading)
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0b0d2b] text-gray-200">
+      <Image
+        src="/honeyblog.png"
+        alt="Chargement"
+        width={160} // équivalent à w-40
+        height={96} // équivalent à h-24
+        className="mb-4 animate-pulse"
+      />
+      <p className="text-lg font-medium text-blue-400 animate-pulse">
+        Chargement des données...
+      </p>
+    </div>
+  );
 
   if (error)
     return (
