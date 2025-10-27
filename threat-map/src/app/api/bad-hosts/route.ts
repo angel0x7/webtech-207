@@ -1,33 +1,49 @@
 import { NextResponse } from "next/server";
 
+interface BadHost {
+  remote_host: string;
+  count: number | string;
+  [key: string]: unknown;
+}
+
+interface EnrichedHost extends BadHost {
+  geo: Record<string, unknown> | null;
+}
+
 export async function GET() {
   try {
-
     const res = await fetch("https://honeydb.io/api/bad-hosts", {
       headers: {
-        "X-HoneyDb-ApiId": process.env.HONEYDB_API_ID!,
-        "X-HoneyDb-ApiKey": process.env.HONEYDB_API_KEY!,
+        "X-HoneyDb-ApiId": process.env.HONEYDB_API_ID ?? "",
+        "X-HoneyDb-ApiKey": process.env.HONEYDB_API_KEY ?? "",
       },
       cache: "no-store",
     });
-    const data = await res.json();
 
-    if (!Array.isArray(data)) return NextResponse.json({ error: "Erreur HoneyDB" }, { status: 500 });
+    const data: unknown = await res.json();
 
-    const filtered = data.filter((h: any) => Number(h.count) > 5000);
+    if (!Array.isArray(data)) {
+      return NextResponse.json({ error: "Erreur HoneyDB" }, { status: 500 });
+    }
 
+    const filtered: BadHost[] = data.filter(
+      (h: BadHost) => Number(h.count) > 5000
+    );
 
-    const Host = await Promise.all(
-      filtered.map(async (host: any) => {
+    const enrichedHosts: EnrichedHost[] = await Promise.all(
+      filtered.map(async (host): Promise<EnrichedHost> => {
         try {
-          const geoRes = await fetch(`https://honeydb.io/api/netinfo/geolocation/${host.remote_host}`, {
-            headers: {
-              "X-HoneyDb-ApiId": process.env.HONEYDB_API_ID!,
-              "X-HoneyDb-ApiKey": process.env.HONEYDB_API_KEY!,
-            },
-            cache: "no-store",
-          });
-          const geo = await geoRes.json();
+          const geoRes = await fetch(
+            `https://honeydb.io/api/netinfo/geolocation/${host.remote_host}`,
+            {
+              headers: {
+                "X-HoneyDb-ApiId": process.env.HONEYDB_API_ID ?? "",
+                "X-HoneyDb-ApiKey": process.env.HONEYDB_API_KEY ?? "",
+              },
+              cache: "no-store",
+            }
+          );
+          const geo: Record<string, unknown> = await geoRes.json();
           return { ...host, geo };
         } catch {
           return { ...host, geo: null };
@@ -35,9 +51,9 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json(Host);
+    return NextResponse.json(enrichedHosts);
   } catch (err) {
-    console.error(err);
+    console.error("Erreur serveur:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
