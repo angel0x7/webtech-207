@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { ip_address: string } }
+  request: NextRequest,
+  context: { params: Promise<{ ip_address: string }> }
 ) {
-  const ipAddress = await params.ip_address;
+  const { ip_address } = await context.params;
 
   try {
-    const res = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${ipAddress}`, {
+    const res = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${ip_address}`, {
       headers: {
-        "x-apikey": process.env.VirusTotal_API_Key!,
+        "x-apikey": process.env.VIRUSTOTAL_API_KEY ?? "",
       },
       cache: "no-store",
     });
@@ -21,7 +22,7 @@ export async function GET(
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Erreur inconnue";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
