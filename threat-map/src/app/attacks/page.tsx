@@ -20,8 +20,6 @@ export default function AttacksPage() {
   const [pulses, setPulses] = useState<Pulse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Filters
   const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -30,14 +28,18 @@ export default function AttacksPage() {
       try {
         const res = await fetch("https://otx.alienvault.com/api/v1/pulses/activity", {
           headers: {
-            "X-OTX-API-KEY": process.env.NEXT_PUBLIC_OTX_KEY as string,
+            "X-OTX-API-KEY": process.env.NEXT_PUBLIC_OTX_KEY ?? "",
           },
         });
         if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
-        const data = await res.json();
-        setPulses(data.results || []);
-      } catch (err: any) {
-        setError(err.message);
+        const data: { results?: Pulse[] } = await res.json();
+        setPulses(data.results ?? []);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
@@ -45,10 +47,8 @@ export default function AttacksPage() {
     fetchPulses();
   }, []);
 
-  // Extract unique tags from pulses for category filter
   const categories = ["All", ...new Set(pulses.flatMap((p) => p.tags))];
 
-  // Apply filters
   const filtered = pulses.filter((p) => {
     const matchesCategory = category === "All" || p.tags.includes(category);
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -62,7 +62,6 @@ export default function AttacksPage() {
     <div style={{ padding: "2rem" }}>
       <h1>Threat Intelligence (AlienVault OTX)</h1>
 
-      {/* Filters */}
       <div style={{ marginBottom: "1rem" }}>
         <label style={{ marginRight: "0.5rem" }}>Filter by category:</label>
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -82,7 +81,6 @@ export default function AttacksPage() {
         />
       </div>
 
-      {/* Results */}
       {filtered.length === 0 ? (
         <p>No results found.</p>
       ) : (

@@ -2,9 +2,27 @@
 
 import React, { useState } from "react";
 
+type AnalysisStats = {
+  harmless: number;
+  malicious: number;
+  suspicious: number;
+};
+
+type IPAttributes = {
+  country: string;
+  asn: number;
+  as_owner: string;
+  last_analysis_stats: AnalysisStats;
+};
+
+type IPData = {
+  id: string;
+  attributes: IPAttributes;
+};
+
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<IPData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,14 +35,14 @@ const SearchBar: React.FC = () => {
     try {
       const response = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${query}`, {
         headers: {
-          "x-apikey": process.env.NEXT_PUBLIC_VT_API_KEY as string, // stocke ta clé dans .env.local
+          "x-apikey": process.env.NEXT_PUBLIC_VT_API_KEY ?? "",
         },
       });
       if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-      const json = await response.json();
+      const json: { data: IPData } = await response.json();
       setData(json.data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
       setLoading(false);
     }
