@@ -4,9 +4,6 @@ import React, { useMemo, useState } from "react";
 import {
   ShieldAlert,
   Loader2,
-  Globe2,
-  Network,
-  Building2,
   Server,
   BarChart2,
   Download,
@@ -41,13 +38,32 @@ type RDAP = {
   events?: Array<{ event_action?: string; event_date?: string }>;
 };
 
+type Attributes = {
+  asn?: string | number;
+  as_owner?: string;
+  country?: string;
+  network?: string;
+  last_analysis_date?: number;
+  last_analysis_stats?: LastAnalysisStats;
+  last_analysis_results?: Record<string, EngineResult>;
+  rdap?: RDAP;
+  whois?: string;
+  categories?: Record<string, unknown>;
+  tags?: string[];
+};
+
+type ApiData = {
+  id: string;
+  attributes?: Attributes;
+};
+
 /* -----------------------
    Utils
    ----------------------- */
 const isValidIP = (v: string) =>
   /^(25[0-5]|2[0-4]\d|1?\d{1,2})(\.(25[0-5]|2[0-4]\d|1?\d{1,2})){3}$/.test(v.trim());
 
-const downloadJSON = (obj: any, name = "vt-ip.json") => {
+const downloadJSON = (obj: unknown, name = "vt-ip.json") => {
   const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -57,11 +73,17 @@ const downloadJSON = (obj: any, name = "vt-ip.json") => {
   URL.revokeObjectURL(url);
 };
 
-const downloadCSV = (rows: Array<Record<string, any>>, name = "engines.csv") => {
+const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv") => {
   if (!rows.length) return;
   const keys = Object.keys(rows[0]);
   const csv = [keys.join(",")]
-    .concat(rows.map(r => keys.map(k => `"${(r[k] ?? "").toString().replace(/"/g, '""')}"`).join(",")))
+    .concat(
+      rows.map((r) =>
+        keys
+          .map((k) => `"${String(r[k] ?? "").replace(/"/g, '""')}"`)
+          .join(",")
+      )
+    )
     .join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -82,7 +104,7 @@ function DonutChart({ stats }: { stats: LastAnalysisStats }) {
     { label: "suspicious", value: stats.suspicious ?? 0, color: "#f59e0b" },
     { label: "harmless", value: stats.harmless ?? 0, color: "#10b981" },
     { label: "undetected", value: stats.undetected ?? 0, color: "#6b7280" },
-  ].filter(s => s.value > 0);
+  ].filter((s) => s.value > 0);
 
   let acc = 0;
   const view = 80;
@@ -114,17 +136,17 @@ function DonutChart({ stats }: { stats: LastAnalysisStats }) {
       </svg>
 
       <div className="text-sm">
-        {["malicious", "suspicious", "harmless", "undetected"].map((k) => (
+        {[("malicious" as const), ("suspicious" as const), ("harmless" as const), ("undetected" as const)].map((k) => (
           <div key={k} className="flex items-center gap-2">
             <span
               className="inline-block w-3 h-3 rounded"
               style={{
-                background:
-                  k === "malicious" ? "#ef4444" : k === "suspicious" ? "#f59e0b" : k === "harmless" ? "#10b981" : "#6b7280",
+                background: k === "malicious" ? "#ef4444" : k === "suspicious" ? "#f59e0b" : k === "harmless" ? "#10b981" : "#6b7280",
               }}
             />
             <span className="text-gray-300 capitalize">{k}</span>
-            <span className="ml-2 font-medium text-white">{(stats as any)[k] ?? 0}</span>
+            <span className="ml-2 font-medium text-white">{stats[k as keyof LastAnalysisStats] ?? 0}</span>
+
           </div>
         ))}
       </div>
@@ -144,10 +166,10 @@ function EnginesTable({ results }: { results?: Record<string, EngineResult> }) {
     [results]
   );
 
-  const [q, setQ] = useState("");
-  const [onlyMalicious, setOnlyMalicious] = useState(false);
+  const [q, setQ] = useState<string>("");
+  const [onlyMalicious, setOnlyMalicious] = useState<boolean>(false);
   const filtered = rows.filter(
-    r =>
+    (r) =>
       (!onlyMalicious || r.category === "malicious") &&
       (r.engine.toLowerCase().includes(q.toLowerCase()) || (r.category || "").toLowerCase().includes(q.toLowerCase()))
   );
@@ -162,10 +184,10 @@ function EnginesTable({ results }: { results?: Record<string, EngineResult> }) {
           className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm placeholder-gray-400"
         />
         <label className="inline-flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={onlyMalicious} onChange={() => setOnlyMalicious(s => !s)} className="accent-yellow-400" />
+          <input type="checkbox" checked={onlyMalicious} onChange={() => setOnlyMalicious((s) => !s)} className="accent-yellow-400" />
           <span>Seulement malicious</span>
         </label>
-        <button onClick={() => downloadCSV(rows, "engines.csv")} className="px-3 py-2 bg-blue-600 rounded text-sm flex items-center gap-2">
+        <button onClick={() => downloadCSV(rows as Array<Record<string, unknown>>, "engines.csv")} className="px-3 py-2 bg-blue-600 rounded text-sm flex items-center gap-2">
           <Download className="w-4 h-4" /> CSV
         </button>
       </div>
@@ -204,7 +226,7 @@ function EnginesTable({ results }: { results?: Record<string, EngineResult> }) {
 }
 
 function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
-  const [openWhois, setOpenWhois] = useState(false);
+  const [openWhois, setOpenWhois] = useState<boolean>(false);
   const events = rdap?.events ?? [];
 
   return (
@@ -222,7 +244,7 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
               RDAP
             </a>
           ))}
-          <button onClick={() => setOpenWhois(s => !s)} className="px-3 py-1 bg-blue-600 rounded flex items-center gap-2">
+          <button onClick={() => setOpenWhois((s) => !s)} className="px-3 py-1 bg-blue-600 rounded flex items-center gap-2">
             <FileText className="w-4 h-4" /> WHOIS
           </button>
         </div>
@@ -263,9 +285,9 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
    Page principale
    ----------------------- */
 export default function IPSearchPage(): React.JSX.Element {
-  const [ip, setIp] = useState("");
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [ip, setIp] = useState<string>("");
+  const [data, setData] = useState<ApiData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
@@ -284,9 +306,13 @@ export default function IPSearchPage(): React.JSX.Element {
         setError(`Erreur API (${res.status})`);
         return;
       }
-      const json = await res.json();
-      setData(json.data ?? json);
-    } catch {
+
+      type ApiResponse = { data?: ApiData } | ApiData;
+      const payload = (await res.json()) as ApiResponse;
+      const result = (payload as { data?: ApiData }).data ? (payload as { data?: ApiData }).data : (payload as ApiData);
+      setData(result ?? null);
+    } catch (e) {
+      console.error(e);
       setError("Erreur réseau ou serveur.");
     } finally {
       setLoading(false);
@@ -302,7 +328,7 @@ export default function IPSearchPage(): React.JSX.Element {
     timeout: 0,
   };
 
-  const totalEngines: number = Object.values(stats).map(v => Number(v ?? 0)).reduce((acc, v) => acc + v, 0);
+  const totalEngines: number = Object.values(stats).map((v) => Number(v ?? 0)).reduce((acc, v) => acc + v, 0);
   const maliciousCount: number = Number(stats.malicious ?? 0);
   const maliciousPct = totalEngines > 0 ? ((maliciousCount / totalEngines) * 100).toFixed(1) : "0.0";
   const riskLabel = maliciousCount > 5 ? "Élevé" : maliciousCount > 0 ? "Modéré" : "Faible";
@@ -384,7 +410,7 @@ export default function IPSearchPage(): React.JSX.Element {
                   <div className="text-sm text-gray-400">
                     Dernière analyse
                     <div className="text-xs text-gray-400">
-                      {attr.last_analysis_date ? new Date(attr.last_analysis_date * 1000).toLocaleString() : "N/A"}
+                      {attr.last_analysis_date ? new Date(Number(attr.last_analysis_date) * 1000).toLocaleString() : "N/A"}
                     </div>
                   </div>
                 </div>
