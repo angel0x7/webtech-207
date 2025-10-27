@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// @ts-expect-error
+
+// @ts-expect-error OrbitControls has no type declaration in three-globe context
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 
 
 type GeoData = {
