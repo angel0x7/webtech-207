@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-import Layout from "../layout";
 
-export default function Map() {
-  return (
-    <Layout>
-      <h1>Map</h1>
-    </Layout>
-=======
 "use client";
 
 import { useEffect, useState } from "react";
@@ -122,6 +114,5 @@ export default function MapPage() {
         </tbody>
       </table>
     </div>
->>>>>>> 5311977aa5a721bdd800946cf4200068a04d7088
   );
 }
