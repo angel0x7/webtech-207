@@ -21,7 +21,9 @@ export default function ThreatsPage() {
   const [circl, setCircl] = useState<CVE[]>([]);
   const [kev, setKev] = useState<CVE[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeSource, setActiveSource] = useState<"otx" | "circl" | "kev" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [category, setCategory] = useState("All");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -29,46 +31,18 @@ export default function ThreatsPage() {
         // AlienVault OTX
         const otxRes = await fetch("https://otx.alienvault.com/api/v1/pulses/activity", {
           headers: {
-            "X-OTX-API-KEY": process.env.NEXT_PUBLIC_OTX_KEY as string,
+            "X-OTX-API-KEY": process.env.NEXT_PUBLIC_OTX_KEY ?? "",
           },
         });
-        const otxData = await otxRes.json();
-        setOtx(otxData.results || []);
-
-        // CIRCL CVE
-        const circlRes = await fetch("/api/circl");
-        const circlData = await circlRes.json();
-        setCircl(
-          circlData.map((c: any) => ({
-            id: c.cveMetadata?.cveId,
-            vendor: c.cveMetadata?.assignerShortName || c.containers?.cna?.providerMetadata?.shortName,
-            title: c.containers?.adp?.[0]?.title || c.containers?.cna?.descriptions?.[0]?.value,
-            description: c.containers?.cna?.descriptions?.[0]?.value,
-            cwe: c.containers?.cna?.problemTypes?.[0]?.descriptions?.[0]?.description,
-            cvss: c.containers?.cna?.metrics?.[0]?.cvssV3_1?.baseScore,
-            severity: c.containers?.cna?.metrics?.[0]?.cvssV3_1?.baseSeverity,
-            references: c.containers?.cna?.references || [],
-          }))
-        );
-
-
-        const kevRes = await fetch("/api/kev");
-        const kevData = await kevRes.json();
-
-        setKev(
-          (kevData || []).map((v: any) => ({
-            id: v.cveID,
-            title: v.vulnerabilityName,
-            vendor: v.vendorProject,
-            product: v.product,
-            dateAdded: v.dateAdded,
-            requiredAction: v.requiredAction,
-            notes: v.notes,
-          }))
-        );
-
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+        const data: { results?: Pulse[] } = await res.json();
+        setPulses(data.results ?? []);
       } catch (err) {
-        console.error("Error fetching APIs:", err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
@@ -76,14 +50,46 @@ export default function ThreatsPage() {
     fetchAll();
   }, []);
 
-  if (loading) return <p>Loading threat data...</p>;
+  const categories = ["All", ...new Set(pulses.flatMap((p) => p.tags))];
 
-  const renderContent = () => {
-    if (activeSource === "otx") {
-      return (
+  const filtered = pulses.filter((p) => {
+    const matchesCategory = category === "All" || p.tags.includes(category);
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  if (loading) return <p>Loading threat intelligence...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Threat Intelligence (AlienVault OTX)</h1>
+
+      <div style={{ marginBottom: "1rem" }}>
+        <label style={{ marginRight: "0.5rem" }}>Filter by category:</label>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {categories.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+
+      <div style={{ marginBottom: "1rem" }}>
+        <label style={{ marginRight: "0.5rem" }}>Search by name:</label>
+        <input
+          type="text"
+          placeholder="Type to search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {filtered.length === 0 ? (
+        <p>No results found.</p>
+      ) : (
         <ul>
-          {otx.map((p, idx) => (
-            <li key={`${p.id || "otx"}-${idx}`}>
+          {filtered.map((p) => (
+            <li key={p.id} style={{ marginBottom: "1rem" }}>
               <strong>{p.name}</strong> — {p.description}
             </li>
           ))}

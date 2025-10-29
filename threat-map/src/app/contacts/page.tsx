@@ -1,4 +1,4 @@
-import Layout from "../layout";
+
 
 export default function Contacts() {
   return (

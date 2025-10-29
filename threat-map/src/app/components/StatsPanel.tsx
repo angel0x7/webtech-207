@@ -148,7 +148,7 @@ export default function StatsPanel({ hosts }: { hosts: Host[] }) {
                 ))}
               </Pie>
               <RechartsTooltip
-                formatter={(value: any) => [value, "events"]}
+                formatter={(value: number | string) => [value, "events"]}
                 contentStyle={{ background: "#87a4ddff", borderRadius: 6 }}
               />
               <Legend />

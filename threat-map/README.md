@@ -1,46 +1,43 @@
-## Authors
+# Threat Map — webtech-207
 
-ADDA Michaël & Velasco Angel
+**Demo live:** https://webtech-207-1i6abtgcc-angels-projects-9c8e1fea.vercel.app/  
 
-## The project
 
-This project is a website that compiles cyber attacks around the world. It provides statistics and details on the subjects of these attacks.
+## Description
+Application Next.js TypeScript pour rechercher et visualiser des informations de sécurité sur des adresses IP : verdicts moteurs, RDAP/WHOIS, statistiques et exports. Interface sombre, composants réactifs et export JSON/CSV.
 
-##
+## Fonctionnalités
+- Recherche d'une IP et affichage des attributs réseau (ASN, fournisseur, pays, CIDR).  
+- Tableau des résultats des moteurs avec filtrage et export CSV.  
+- Donut chart pour les statuts d'analyse.  
+- Panneau RDAP/WHOIS avec copie et export JSON.  
+- Actions utilitaires : copier IP, exporter JSON, blocage (placeholder).
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Stack
+- Next.js (app router, `"use client"`)  
+- React + TypeScript  
+- Tailwind CSS  
+- lucide-react (icônes)
 
-## Getting Started
-
-First, run the development server:
-
+## Installation locale
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/angel0x7/webtech-207.git
+cd webtech-207/threat-map
+npm install
 ```
+Variables d'environnement
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Créez .env.local si nécessaire. Exemple :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+NEXT_PUBLIC_API_BASE=https://api.example.com
+VT_API_KEY=your_virustotal_api_key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Adapter selon l'implémentation du backend / des routes API.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Scripts utiles
+```bash
+npm run dev    # développement
+npm run build  # build production
+npm run start  # start production (après build)
+```
