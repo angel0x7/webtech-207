@@ -1,18 +1,35 @@
-# webtech-207
-**Angel Velasco Michael Adda**
-**Depository Tech_Web**
+# Threat Map — webtech-207
 
-#  webtech Labs
-Here you can find links to the different labs:
+**Demo live:** [vercel_link](https://webtech-207.vercel.app/) 
 
-##  Labs
 
-- [Lab 01 - Get basic skills](/Lab%2001%20-%20Get%20basic%20skills/README.md)
-- [Lab 02](/lab2/README.md)
-- [Lab 03](/lab3/README.md)
+## Description
+Application Next.js TypeScript pour rechercher et visualiser des informations de sécurité sur des adresses IP : verdicts moteurs, RDAP/WHOIS, statistiques et exports. Interface sombre, composants réactifs et export JSON/CSV.
 
----
-Click on a lab to access its content.
+## Fonctionnalités
+- Recherche d'une IP et affichage des attributs réseau (ASN, fournisseur, pays, CIDR).  
+- Tableau des résultats des moteurs avec filtrage et export CSV.  
+- Donut chart pour les statuts d'analyse.  
+- Panneau RDAP/WHOIS avec copie et export JSON.  
+- Actions utilitaires : copier IP, exporter JSON, blocage (placeholder).
 
-### Project
-The project is located in the "threat-map" folder.
+## Stack
+- Next.js (app router, `"use client"`)  
+- React + TypeScript  
+- Tailwind CSS  
+- lucide-react (icônes)
+
+## Installation locale
+```bash
+git clone https://github.com/angel0x7/webtech-207.git
+cd webtech-207/threat-map
+npm install
+```
+
+
+Scripts utiles
+```bash
+npm run dev    # développement
+npm run build  # build production
+npm run start  # start production (après build)
+```
