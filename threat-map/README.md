@@ -25,15 +25,7 @@ git clone https://github.com/angel0x7/webtech-207.git
 cd webtech-207/threat-map
 npm install
 ```
-Variables d'environnement
 
-Créez .env.local si nécessaire. Exemple :
-
-NEXT_PUBLIC_API_BASE=https://api.example.com
-VT_API_KEY=your_virustotal_api_key
-
-
-Adapter selon l'implémentation du backend / des routes API.
 
 Scripts utiles
 ```bash
