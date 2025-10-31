@@ -18,7 +18,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState('system')
 
   useEffect(() => {
-    // Session Supabase
+
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null))
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) =>
@@ -28,7 +28,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    // Appliquer le thème globalement
+
     if (theme === 'system') {
       document.documentElement.classList.remove('dark')
     } else if (theme === 'dark') {
