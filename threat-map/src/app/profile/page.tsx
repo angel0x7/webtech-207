@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../context/UserContext'
 import { getUserProfile, upsertUserProfile, uploadAvatar } from '../lib/profil'
+import type { UserProfile } from '../lib/types'
 import { useTranslation } from 'react-i18next'
 import '../lib/i18n'
 
 export default function ProfilePage() {
   const { user, theme, setTheme } = useUser()
   const { t, i18n } = useTranslation()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,7 +30,7 @@ export default function ProfilePage() {
         setTheme(data?.theme || 'system')
         setLanguage(data?.language || 'en')
       })
-      .catch((err) => setError(err.message))
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : JSON.stringify(err)))
       .finally(() => setLoading(false))
   }, [user, setTheme])
 
@@ -43,8 +44,8 @@ export default function ProfilePage() {
     try {
       const url = await uploadAvatar(user.id, file)
       setAvatarUrl(url)
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : JSON.stringify(err))
     }
   }
 
@@ -60,8 +61,8 @@ export default function ProfilePage() {
         language,
       })
       alert('Profil mis à jour !')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : JSON.stringify(err))
     }
   }
 
@@ -75,7 +76,6 @@ export default function ProfilePage() {
 
         <h1 className="text-3xl font-bold text-white text-center">{t('profile')}</h1>
 
-        {/* Avatar */}
         <div className="flex flex-col items-center gap-4">
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-24 h-24 rounded-full border-2 border-blue-600 object-cover" />
@@ -84,15 +84,9 @@ export default function ProfilePage() {
               Avatar
             </div>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="text-gray-200 text-sm"
-          />
+          <input type="file" accept="image/*" onChange={handleAvatarChange} className="text-gray-200 text-sm" />
         </div>
 
-        {/* Username */}
         <div className="flex flex-col space-y-1">
           <label className="text-gray-300 font-medium">{t('username')}</label>
           <input
@@ -102,7 +96,6 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Bio */}
         <div className="flex flex-col space-y-1">
           <label className="text-gray-300 font-medium">{t('bio')}</label>
           <textarea
@@ -113,7 +106,6 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Theme */}
         <div className="flex flex-col space-y-1">
           <label className="text-gray-300 font-medium">Theme</label>
           <select
@@ -127,7 +119,6 @@ export default function ProfilePage() {
           </select>
         </div>
 
-        {/* Language */}
         <div className="flex flex-col space-y-1">
           <label className="text-gray-300 font-medium">Langue</label>
           <select

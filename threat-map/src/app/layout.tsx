@@ -35,13 +35,13 @@ function LayoutContent({ children }: { children: ReactNode }) {
     <div className="flex flex-col min-h-screen relative">
       <Navbar />
 
-      {/* Boutons en haut à droite */}
+
       <div className="absolute top-4 right-6 flex items-center gap-3">
         {!user ? (
           <LoginButton />
         ) : (
           <>
-            {/* Avatar */}
+
             {profile?.avatar_url && (
               <img
                 src={profile.avatar_url}
@@ -50,10 +50,10 @@ function LayoutContent({ children }: { children: ReactNode }) {
               />
             )}
 
-            {/* Username */}
+
             {profile?.username && <span className="text-white font-semibold">{profile.username}</span>}
 
-            {/* Bouton Profil */}
+ 
             <button
               onClick={() => router.push('/profile')}
               className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-4 py-1 rounded transition"
@@ -61,7 +61,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
               Profil
             </button>
 
-            {/* Logout */}
+
             <LogoutButton />
           </>
         )}
