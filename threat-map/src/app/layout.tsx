@@ -21,10 +21,11 @@ function LayoutContent({ children }: { children: ReactNode }) {
     const fetchProfile = async () => {
       try {
         const data = await getUserProfile(user.id)
-        if (!data) return
         setProfile(data)
-      } catch (err: any) {
-        console.error('Erreur récupération profil :', err?.message ?? err)
+      } catch (err: unknown) {
+
+        const message = err instanceof Error ? err.message : JSON.stringify(err)
+        console.error('Erreur récupération profil :', message)
       }
     }
 
@@ -53,7 +54,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
             {profile?.username && <span className="text-white font-semibold">{profile.username}</span>}
 
- 
+
             <button
               onClick={() => router.push('/profile')}
               className="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-4 py-1 rounded transition"
