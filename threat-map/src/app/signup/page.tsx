@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { supabase } from '../config/supabaseClient' // adapte le chemin
+import { use, useState } from 'react'
+import { supabase } from '../config/supabaseClient' 
 
 export default function SignupPage() {
   const [name, setName] = useState('')
@@ -19,7 +19,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { full_name: name }, // stocke le nom dans user_metadata
+        data: { full_name: name }, 
       },
     })
 
