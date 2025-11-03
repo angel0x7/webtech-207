@@ -4,7 +4,7 @@ import type { UserProfile } from './types'
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   const { data, error } = await supabase
-    .from<UserProfile>('profiles')
+    .from('profiles')
     .select('*')
     .eq('id', userId)
     .maybeSingle()
@@ -15,7 +15,7 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 
 export const upsertUserProfile = async (profile: UserProfile): Promise<UserProfile | null> => {
   const { data, error } = await supabase
-    .from<UserProfile>('profiles')
+    .from('profiles')
     .upsert(profile, { onConflict: 'id' })
 
   if (error) throw error

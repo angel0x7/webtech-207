@@ -6,17 +6,17 @@ export default function LoginButton() {
     const router = useRouter();
 
     return (
-        <div className="absolute top-1/2 right-6 transform -translate-y-1/2 flex gap-3">
+        <div className="absolute top-2 right-6 transform -translate-y-2 flex gap-3">
             <button
                 onClick={() => router.push("/login")}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-2 rounded-lg shadow-md transition-all"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8  rounded-lg shadow-md transition-all"
             >
                 Login
             </button>
 
             <button
                 onClick={() => router.push("/signup")}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-2 rounded-lg shadow-md transition-all"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8  rounded-lg shadow-md transition-all"
             >
                 Première connexion
             </button>
