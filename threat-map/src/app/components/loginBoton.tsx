@@ -11,7 +11,7 @@ export default function LoginButton() {
                 onClick={() => router.push("/login")}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-2 rounded-lg shadow-md transition-all"
             >
-                Login
+                Login...
             </button>
 
             <button
