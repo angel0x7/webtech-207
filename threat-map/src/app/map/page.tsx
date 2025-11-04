@@ -90,7 +90,7 @@ if (loading)
       <h1 className="text-2xl font-bold mb-4 text-blue-400 text-center">Bad Hosts GLOBE</h1>
 
       <div className="mb-8">
-        <Globe3D hosts={hosts} />
+        <Globe3D />
       </div>
 
       <StatsPanel hosts={hosts} />
