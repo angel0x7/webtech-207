@@ -36,6 +36,12 @@ export const SidebarData: SidebarItem[] = [
     cName: "nav-text",
   },
   {
+    title: "CVE",
+    path: "/CVE",
+    icon: <FaIcons.FaDatabase />,         
+    cName: "nav-text",
+  },
+  {
     title: "Forum",
     path: "/forum",
     icon: <FaIcons.FaBomb />,         
