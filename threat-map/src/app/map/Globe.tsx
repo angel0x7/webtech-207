@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-// @ts-expect-error
+// @ts-expect-error 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 interface GeoData {

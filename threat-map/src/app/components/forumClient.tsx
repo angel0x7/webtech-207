@@ -1,4 +1,4 @@
-// components/ForumClient.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ export default function ForumClient() {
         async function load() {
             setLoading(true);
             const { data, error } = await supabase
-                .from("questions")
+                .from("question")
                 .select("id,titre,texte,created_at,idProfile")
                 .order("created_at", { ascending: false });
 
