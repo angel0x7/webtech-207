@@ -86,11 +86,13 @@ if (loading)
 
 
   return (
-    <div className="p-6 text-gray-100 bg-[#0b0d2b] min-h-screen">
+    <div className="p-6 text-gray-100 bg-[#0b0d2b] min-h-screen map-container"> {/* Use the new class */}
       <h1 className="text-2xl font-bold mb-4 text-blue-400 text-center">Bad Hosts GLOBE</h1>
 
-      <div className="mb-8">
+      <div className="mb-11 "style={{ marginLeft: 90 }}>
+        <div className="mb-11 "style={{ marginRight: 300 }}>
         <Globe3D />
+      </div>
       </div>
 
       <StatsPanel hosts={hosts} />
