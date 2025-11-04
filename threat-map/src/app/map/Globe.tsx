@@ -59,7 +59,7 @@ export default function Globe() {
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setClearColor(0x000000, 0); // transparent
+      renderer.setClearColor(0x000000, 0); 
       container.appendChild(renderer.domElement);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -116,7 +116,7 @@ export default function Globe() {
     };
   }, []);
 
-  // --- Affichage des points rouges ---
+
   useEffect(() => {
     const globe = globeObjRef.current;
     if (!globe || !hosts.length) return;
@@ -127,7 +127,7 @@ export default function Globe() {
         lat: h.geo!.latitude!,
         lng: h.geo!.longitude!,
         size: 0.06,
-        color: "#FF003C", // rouge fluo
+        color: "#FF003C", 
         ip: h.remote_host,
         country: h.geo?.country_name ?? "Unknown",
       }));
