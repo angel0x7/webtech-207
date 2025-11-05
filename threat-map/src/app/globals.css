@@ -1,2 +1,45 @@
 @import "tailwindcss";
 @import 'leaflet/dist/leaflet.css';
+body {
+  background: radial-gradient(circle at 20% 20%, #0a0a1f, #050510 80%);
+  color: #d1d5db;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.cyber-border {
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 200, 0.1);
+}
+
+.cyber-card {
+  background: rgba(20, 20, 40, 0.8);
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+.cyber-card:hover {
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+
+.cyber-input {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  color: #e2e8f0;
+}
+.cyber-input:focus {
+  border-color: #00fff2;
+  box-shadow: 0 0 6px #00fff2;
+  outline: none;
+}
+
+.cyber-btn {
+  background: linear-gradient(90deg, #00fff2, #008aff);
+  color: #0a0a1f;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+.cyber-btn:hover {
+  filter: brightness(1.2);
+}

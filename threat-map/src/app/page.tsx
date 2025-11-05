@@ -65,7 +65,7 @@ export default function Home() {
           <div className="p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all">
             <h3 className="text-xl font-semibold text-green-400 mb-2">🌐 Carte 3D Interactive</h3>
             <p className="text-gray-400 text-sm">
-              Une vue globale du trafic hostile sur un globe 3D fluide et précis.
+              Une vue globale du trafic hostile sur un globe 3D fluide et précis.º
             </p>
           </div>
           <div className="p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all">
