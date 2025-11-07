@@ -5,6 +5,19 @@ import { supabase } from "../config/supabaseClient";
 import QuestionCard from "./questionCard";
 import NewQuestion from "./newQuestion";
 
+type Profile = {
+  username: string | null;
+};
+
+type SupabaseQuestionRow = {
+  id: number;
+  titre: string | null;
+  texte: string | null;
+  created_at: string;
+  idProfile: string | null;
+  profiles?: { username: string | null } | { username: string | null }[] | null;
+};
+
 type Question = {
   id: number;
   titre: string | null;
@@ -27,24 +40,42 @@ export default function ForumClient() {
       try {
         const { data, error } = await supabase
           .from("question")
-          .select("id,titre,texte,created_at,idProfile,profiles(username)")
+          .select(`
+            id,
+            titre,
+            texte,
+            created_at,
+            idProfile,
+            profiles: idProfile ( username )
+          `)
           .order("created_at", { ascending: false });
 
-        if (!error && data && mounted) {
-          const normalized = data.map((q: any) => {
-            const profileObj = Array.isArray(q.profiles) ? q.profiles[0] ?? null : q.profiles ?? null;
+        if (error) {
+          console.error("Supabase error:", error);
+          return;
+        }
+
+        if (mounted && data) {
+          const normalized: Question[] = (data as SupabaseQuestionRow[]).map((q) => {
+            let username: string | null = null;
+
+            if (Array.isArray(q.profiles)) {
+              username = q.profiles[0]?.username ?? null;
+            } else if (q.profiles && "username" in q.profiles) {
+              username = q.profiles.username ?? null;
+            }
+
             return {
               id: q.id,
               titre: q.titre,
               texte: q.texte,
               created_at: q.created_at,
               idProfile: q.idProfile,
-              profile: profileObj ? { username: profileObj.username } : undefined,
-            } as Question;
+              profile: username ? { username } : undefined,
+            };
           });
+
           setQuestions(normalized);
-        } else if (error) {
-          console.error("Supabase error:", error);
         }
       } catch (err) {
         console.error("Unexpected fetch error:", err);
@@ -54,7 +85,9 @@ export default function ForumClient() {
     }
 
     load();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   function handleAddedQuestion(q: Question) {
@@ -65,7 +98,7 @@ export default function ForumClient() {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-gray-600">Questions: {questions.length}</div>
+        <div className="text-sm text-gray-600">Questions : {questions.length}</div>
         <button
           className="px-4 py-2 bg-green-600 text-white rounded"
           onClick={() => setShowForm((s) => !s)}
@@ -81,7 +114,7 @@ export default function ForumClient() {
       )}
 
       {loading ? (
-        <p>Loading…</p>
+        <p>Chargement…</p>
       ) : (
         <div className="space-y-4">
           {questions.length === 0 ? (

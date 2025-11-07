@@ -6,15 +6,38 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+interface CommentPayload {
+  texte: string;
+  idQuestion: number;
+  idProfile?: string;
+}
+
+interface CommentResponse {
+  id: number;
+  texte: string;
+  created_at: string;
+  idProfile: string | null;
+  idQuestion: number;
+  profiles: { username: string | null }[];
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { texte, idQuestion, idProfile } = await req.json();
+    const body = (await req.json()) as CommentPayload;
+    const { texte, idQuestion, idProfile } = body;
+
     if (!texte || !idQuestion) {
-      return NextResponse.json({ message: "texte and idQuestion required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "texte and idQuestion required" },
+        { status: 400 }
+      );
     }
 
-    const payload: any = { texte, idQuestion };
-    if (idProfile) payload.idProfile = idProfile;
+    const payload: Record<string, unknown> = {
+      texte,
+      idQuestion,
+      ...(idProfile ? { idProfile } : {}),
+    };
 
     const { data, error } = await supabase
       .from("commentaire")
@@ -29,9 +52,23 @@ export async function POST(req: NextRequest) {
       `)
       .single();
 
-    if (error) return NextResponse.json({ message: error.message }, { status: 500 });
-    return NextResponse.json(data, { status: 201 });
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || "Server error" }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
+
+    const response: CommentResponse = {
+      id: data.id,
+      texte: data.texte,
+      created_at: data.created_at,
+      idProfile: data.idProfile ?? null,
+      idQuestion: data.idQuestion,
+      profiles: Array.isArray(data.profiles) ? data.profiles : [],
+    };
+
+    return NextResponse.json(response, { status: 201 });
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Unexpected server error";
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

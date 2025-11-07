@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../config/supabaseClient";
 
+type Profile = {
+  username?: string | null;
+};
+
 type Question = {
   id: number;
   titre: string | null;
   texte: string | null;
   created_at: string;
   idProfile: string | null;
-  profile?: { username?: string | null };
+  profile?: Profile;
 };
 
 type Answer = {
@@ -18,7 +22,16 @@ type Answer = {
   created_at: string;
   idProfile: string | null;
   idQuestion: number;
-  profile?: { username?: string | null };
+  profile?: Profile;
+};
+
+type SupabaseAnswerRow = {
+  id: number;
+  texte: string;
+  created_at: string;
+  idProfile: string | null;
+  idQuestion: number;
+  profiles?: { username: string | null } | { username: string | null }[] | null;
 };
 
 export default function QuestionCard({ question }: { question: Question }) {
@@ -50,18 +63,31 @@ export default function QuestionCard({ question }: { question: Question }) {
         if (error) {
           setError(error.message ?? "Erreur en récupérant les réponses");
         } else if (mounted && data) {
-          const normalized = data.map((a: any) => ({
-            id: a.id,
-            texte: a.texte,
-            created_at: a.created_at,
-            idProfile: a.idProfile,
-            idQuestion: a.idQuestion,
-            profile: a.profiles ? { username: a.profiles.username } : undefined,
-          }));
+          const normalized: Answer[] = (data as SupabaseAnswerRow[]).map((a) => {
+            let username: string | null = null;
+
+            if (Array.isArray(a.profiles)) {
+              // Si Supabase renvoie un tableau
+              username = a.profiles[0]?.username ?? null;
+            } else if (a.profiles && "username" in a.profiles) {
+              // Si Supabase renvoie un objet
+              username = a.profiles.username ?? null;
+            }
+
+            return {
+              id: a.id,
+              texte: a.texte,
+              created_at: a.created_at,
+              idProfile: a.idProfile,
+              idQuestion: a.idQuestion,
+              profile: username ? { username } : undefined,
+            };
+          });
+
           setAnswers(normalized);
         }
       } catch (err) {
-        setError(String(err));
+        setError(err instanceof Error ? err.message : String(err));
       } finally {
         if (mounted) setLoadingAnswers(false);
       }
@@ -94,27 +120,32 @@ export default function QuestionCard({ question }: { question: Question }) {
       const text = await res.text();
       if (!res.ok) throw new Error(text || "Failed to post answer");
 
-      const created = JSON.parse(text);
+      const created: SupabaseAnswerRow = JSON.parse(text);
+
+      let username: string | null = null;
+      if (Array.isArray(created.profiles)) {
+        username = created.profiles[0]?.username ?? null;
+      } else if (created.profiles && "username" in created.profiles) {
+        username = created.profiles.username ?? null;
+      }
+
       const normalized: Answer = {
         id: created.id,
         texte: created.texte,
         created_at: created.created_at,
         idProfile: created.idProfile,
         idQuestion: created.idQuestion,
-        profile: created.profiles
-          ? { username: created.profiles.username }
-          : undefined,
+        profile: username ? { username } : undefined,
       };
 
       setAnswers((prev) => [...prev, normalized]);
       setShowForm(false);
-    } catch (err: any) {
-      setError(err.message || "Erreur lors de l'envoi");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
     } finally {
       setPosting(false);
     }
   }
-
 
   return (
     <article className="p-4 bg-white rounded shadow">
