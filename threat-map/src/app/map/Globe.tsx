@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-// @ts-expect-error 
+// @ts-expect-error three-globe types not provided by DefinitelyTyped
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 interface GeoData {
@@ -20,6 +20,7 @@ interface Host {
 
 export default function Globe() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  //@typescript-eslint/no-explicit-any types nay not be available
   const globeObjRef = useRef<any>(null);
   const [hosts, setHosts] = useState<Host[]>([]);
 
