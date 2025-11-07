@@ -17,9 +17,9 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       })
 
       if (error) {
@@ -31,7 +31,7 @@ export default function LoginPage() {
       if (data.user) {
         // Attendre que la session soit persistée
         await new Promise(resolve => setTimeout(resolve, 300))
-        
+
         // Navigation React (pas de reload complet)
         router.push('/')
         router.refresh() // Force le refresh du layout pour mettre à jour UserContext
@@ -50,7 +50,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
-        options: { 
+        options: {
           redirectTo: `${window.location.origin}/auth/callback`
         },
       })
@@ -163,9 +163,10 @@ export default function LoginPage() {
               onClick={() => router.push('/signup')}
               className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors underline"
             >
-              S'inscrire
+              S&apos;inscrire
             </button>
           </p>
+
         </div>
       </div>
     </div>

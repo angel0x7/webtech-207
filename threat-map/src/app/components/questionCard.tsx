@@ -48,6 +48,7 @@ export default function QuestionCard({ question }: { question: Question }) {
         if (error) throw error;
 
         if (data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
           const normalized: Answer[] = data.map((a: any) => ({
             id: a.id,
             texte: a.texte,
