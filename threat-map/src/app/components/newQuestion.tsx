@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "../config/supabaseClient"; 
-//@typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
 export default function NewQuestion({ onPosted }: { onPosted?: (q: any) => void }) {
   const [titre, setTitre] = useState("");
   const [texte, setTexte] = useState("");
@@ -36,7 +36,7 @@ export default function NewQuestion({ onPosted }: { onPosted?: (q: any) => void 
       setTitre("");
       setTexte("");
       if (onPosted) onPosted(payload);
-      //@typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
     } catch (err: any) {
       setError(err.message || "Unknown error");
     } finally {

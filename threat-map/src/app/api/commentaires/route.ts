@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!texte || !idQuestion) {
       return NextResponse.json({ message: "texte and idQuestion required" }, { status: 400 });
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
     const payload: any = { texte, idQuestion };
     if (idProfile) payload.idProfile = idProfile;
 
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
 
     if (error) return NextResponse.json({ message: error.message }, { status: 500 });
     return NextResponse.json(data, { status: 201 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
   } catch (err: any) {
     return NextResponse.json({ message: err.message || "Server error" }, { status: 500 });
   }
