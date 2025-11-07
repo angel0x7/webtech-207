@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../config/supabaseClient";
 
-type Profile = {
-  username?: string | null;
-};
-
+type Profile = { username?: string | null };
 type Question = {
   id: number;
   titre: string | null;
@@ -15,7 +12,6 @@ type Question = {
   idProfile: string | null;
   profile?: Profile;
 };
-
 type Answer = {
   id: number;
   texte: string;
@@ -25,25 +21,14 @@ type Answer = {
   profile?: Profile;
 };
 
-type SupabaseAnswerRow = {
-  id: number;
-  texte: string;
-  created_at: string;
-  idProfile: string | null;
-  idQuestion: number;
-  profiles?: { username: string | null } | { username: string | null }[] | null;
-};
-
 export default function QuestionCard({ question }: { question: Question }) {
-  const [showForm, setShowForm] = useState(false);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [showForm, setShowForm] = useState(false);
   const [loadingAnswers, setLoadingAnswers] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
-
     async function loadAnswers() {
       setLoadingAnswers(true);
       try {
@@ -60,52 +45,36 @@ export default function QuestionCard({ question }: { question: Question }) {
           .eq("idQuestion", question.id)
           .order("created_at", { ascending: true });
 
-        if (error) {
-          setError(error.message ?? "Erreur en récupérant les réponses");
-        } else if (mounted && data) {
-          const normalized: Answer[] = (data as SupabaseAnswerRow[]).map((a) => {
-            let username: string | null = null;
+        if (error) throw error;
 
-            if (Array.isArray(a.profiles)) {
-              // Si Supabase renvoie un tableau
-              username = a.profiles[0]?.username ?? null;
-            } else if (a.profiles && "username" in a.profiles) {
-              // Si Supabase renvoie un objet
-              username = a.profiles.username ?? null;
-            }
-
-            return {
-              id: a.id,
-              texte: a.texte,
-              created_at: a.created_at,
-              idProfile: a.idProfile,
-              idQuestion: a.idQuestion,
-              profile: username ? { username } : undefined,
-            };
-          });
-
+        if (data) {
+          const normalized: Answer[] = data.map((a: any) => ({
+            id: a.id,
+            texte: a.texte,
+            created_at: a.created_at,
+            idProfile: a.idProfile,
+            idQuestion: a.idQuestion,
+            profile: Array.isArray(a.profiles)
+              ? { username: a.profiles[0]?.username ?? null }
+              : a.profiles ?? undefined,
+          }));
           setAnswers(normalized);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
-        if (mounted) setLoadingAnswers(false);
+        setLoadingAnswers(false);
       }
     }
 
     loadAnswers();
-    return () => {
-      mounted = false;
-    };
   }, [question.id]);
 
   async function handleAddAnswer(texte: string) {
     setPosting(true);
     setError(null);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
       const res = await fetch("/api/commentaires", {
         method: "POST",
@@ -117,17 +86,8 @@ export default function QuestionCard({ question }: { question: Question }) {
         }),
       });
 
-      const text = await res.text();
-      if (!res.ok) throw new Error(text || "Failed to post answer");
-
-      const created: SupabaseAnswerRow = JSON.parse(text);
-
-      let username: string | null = null;
-      if (Array.isArray(created.profiles)) {
-        username = created.profiles[0]?.username ?? null;
-      } else if (created.profiles && "username" in created.profiles) {
-        username = created.profiles.username ?? null;
-      }
+      const created = await res.json();
+      if (!res.ok) throw new Error(created.message || "Erreur serveur");
 
       const normalized: Answer = {
         id: created.id,
@@ -135,60 +95,64 @@ export default function QuestionCard({ question }: { question: Question }) {
         created_at: created.created_at,
         idProfile: created.idProfile,
         idQuestion: created.idQuestion,
-        profile: username ? { username } : undefined,
+        profile: created.profiles
+          ? { username: created.profiles.username }
+          : undefined,
       };
 
       setAnswers((prev) => [...prev, normalized]);
       setShowForm(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de l'envoi");
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
       setPosting(false);
     }
   }
 
   return (
-    <article className="p-4 bg-white rounded shadow">
-      <h3 className="font-semibold text-lg">{question.titre}</h3>
-      <p className="text-sm text-gray-700 mt-1">{question.texte}</p>
-      <div className="mt-2 text-xs text-gray-500">
-        Posté par : {question.profile?.username ?? "Anonyme"} —{" "}
+    <article className="p-6 bg-gray-900/70 border border-gray-700 rounded-2xl shadow-lg text-gray-100">
+      <h3 className="text-lg font-semibold text-blue-400">{question.titre}</h3>
+      <p className="text-sm text-gray-300 mt-2">{question.texte}</p>
+
+      <div className="mt-3 text-xs text-gray-500">
+        Posté par <span className="text-blue-400">{question.profile?.username ?? "Anonyme"}</span> —{" "}
         {new Date(question.created_at).toLocaleString()}
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-4 flex items-center gap-3">
         <button
-          className="px-3 py-1 bg-blue-600 text-white rounded text-sm"
+          className="px-4 py-1.5 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium text-white transition"
           onClick={() => setShowForm((s) => !s)}
         >
           {showForm ? "Annuler" : "Répondre"}
         </button>
-        <div className="text-sm text-gray-500">{answers.length} réponse(s)</div>
+        <div className="text-sm text-gray-400">{answers.length} réponse(s)</div>
       </div>
 
       {showForm && (
-        <div className="mt-3">
+        <div className="mt-4">
           <AnswerForm onAdd={handleAddAnswer} disabled={posting} />
-          {posting && (
-            <div className="text-sm text-gray-500 mt-2">Envoi…</div>
-          )}
-          {error && <div className="text-sm text-red-600 mt-2">{error}</div>}
+          {posting && <p className="text-sm text-gray-400 mt-2">Envoi...</p>}
+          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
         </div>
       )}
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-5 space-y-3">
         {loadingAnswers ? (
-          <div className="text-sm text-gray-500">Chargement des réponses…</div>
+          <p className="text-sm text-gray-400">Chargement des réponses...</p>
         ) : answers.length === 0 ? (
-          <div className="text-sm text-gray-500">Pas encore de réponses</div>
+          <p className="text-sm text-gray-400">Aucune réponse pour le moment.</p>
         ) : (
           answers.map((a) => (
-            <div key={a.id} className="p-3 bg-gray-50 rounded">
-              <div className="text-sm text-gray-800">{a.texte}</div>
-              <div className="mt-1 text-xs text-gray-500">
-                Par {a.profile?.username ?? "Anonyme"} —{" "}
+            <div
+              key={a.id}
+              className="p-3 bg-gray-800/60 border border-gray-700 rounded-lg"
+            >
+              <p className="text-sm text-gray-200">{a.texte}</p>
+              <p className="mt-1 text-xs text-gray-500">
+                Par <span className="text-blue-400">{a.profile?.username ?? "Anonyme"}</span> —{" "}
                 {new Date(a.created_at).toLocaleString()}
-              </div>
+              </p>
             </div>
           ))
         )}
@@ -219,13 +183,15 @@ function AnswerForm({
       <input
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 border rounded px-3 py-2"
         placeholder="Écrire une réponse..."
+        className="flex-1 border border-gray-700 bg-gray-800/70 text-gray-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
         disabled={disabled}
       />
       <button
         type="submit"
-        className="px-4 py-2 bg-green-600 text-white rounded"
+        className={`px-4 py-2 rounded-lg font-medium transition ${
+          disabled ? "bg-green-800" : "bg-green-600 hover:bg-green-500"
+        } text-white`}
         disabled={disabled}
       >
         Répondre
