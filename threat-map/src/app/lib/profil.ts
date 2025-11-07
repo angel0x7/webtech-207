@@ -3,9 +3,12 @@ import { supabase } from '../config/supabaseClient'
 export interface UserProfile {
   id: string
   username?: string
-  email?: string
+  bio?: string              
   avatar_url?: string
-  // ajoute ici les autres champs de ta table profiles
+  theme?: string
+  language?: string
+  created_at?: string
+  updated_at?: string
 }
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
