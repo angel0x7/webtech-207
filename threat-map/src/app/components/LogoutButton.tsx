@@ -17,11 +17,14 @@ export default function LogoutButton() {
   }
 
   return (
-    <button
+    <div className="absolute top-2 right-6 z-[200] flex gap-3">
+     <button
       onClick={handleLogout}
       className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all"
     >
       Déconnexion
-    </button>
+     </button>
+    </div>
   )
 }
+
