@@ -20,7 +20,11 @@ export default function LogoutButton() {
     <div className="absolute top-2 right-6 z-[200] flex gap-3">
      <button
       onClick={handleLogout}
-      className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-all"
+      className="px-4 py-2 font-semibold text-white rounded-lg 
+                   bg-gradient-to-r from-rose-700 to-red-700 
+                   hover:from-rose-600 hover:to-red-600 
+                   border border-red-500/30 
+                   transition-all duration-200"
     >
       Déconnexion
      </button>

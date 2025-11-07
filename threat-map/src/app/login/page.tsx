@@ -1,70 +1,136 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../config/supabaseClient'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setError(error.message)
-    else window.location.href = '/'
+    setLoading(true)
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      })
+
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+
+      if (data.user) {
+        // Attendre que la session soit persistée
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
+        // Navigation React (pas de reload complet)
+        router.push('/')
+        router.refresh() // Force le refresh du layout pour mettre à jour UserContext
+      }
+    } catch (err) {
+      setError('Une erreur inattendue est survenue')
+      setLoading(false)
+      console.error('Erreur de connexion:', err)
+    }
   }
 
   const handleGitHubLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: `${window.location.origin}/` },
-    })
-    if (error) setError(error.message)
+    setError(null)
+    setLoading(true)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: { 
+          redirectTo: `${window.location.origin}/auth/callback`
+        },
+      })
+
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+      }
+      // Pas besoin de setLoading(false) car la page va être redirigée
+    } catch (err) {
+      setError('Erreur lors de la connexion GitHub')
+      setLoading(false)
+      console.error('Erreur GitHub OAuth:', err)
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white px-4">
-      {/* Fond animé cyber */}
-    
-    
-
       <div className="relative bg-gray-900/80 border border-cyan-500/30 rounded-2xl shadow-[0_0_25px_#00fff2] p-8 w-full max-w-md backdrop-blur-md">
         <h1 className="text-3xl font-bold mb-6 text-center text-cyan-300 drop-shadow-[0_0_6px_#00fff2]">
           Connexion
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Adresse email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded bg-[#0f172a] border border-cyan-500/30 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 transition"
-          />
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded bg-[#0f172a] border border-cyan-500/30 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 transition"
-          />
+          <div>
+            <input
+              type="email"
+              placeholder="Adresse email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              required
+              autoComplete="email"
+              className="w-full p-3 rounded bg-[#0f172a] border border-cyan-500/30 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              required
+              autoComplete="current-password"
+              minLength={6}
+              className="w-full p-3 rounded bg-[#0f172a] border border-cyan-500/30 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg font-semibold uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-blue-600 text-gray-900 hover:from-cyan-300 hover:to-blue-500 transition-all shadow-[0_0_15px_#00fff2]"
+            disabled={loading || !email || !password}
+            className="w-full py-2.5 rounded-lg font-semibold uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-blue-600 text-gray-900 hover:from-cyan-300 hover:to-blue-500 transition-all shadow-[0_0_15px_#00fff2] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-cyan-400 disabled:hover:to-blue-600"
           >
-            Se connecter
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Connexion...
+              </span>
+            ) : (
+              'Se connecter'
+            )}
           </button>
         </form>
 
         <div className="my-6 flex items-center justify-center">
-          <span className="text-gray-400 text-sm">ou</span>
+          <div className="flex-1 border-t border-gray-700"></div>
+          <span className="text-gray-400 text-sm px-4">ou</span>
+          <div className="flex-1 border-t border-gray-700"></div>
         </div>
 
         <button
           onClick={handleGitHubLogin}
-          className="w-full bg-[#111827] hover:bg-[#1f2937] border border-gray-700 text-white font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-3 shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+          disabled={loading}
+          className="w-full bg-[#111827] hover:bg-[#1f2937] border border-gray-700 text-white font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-3 shadow-[0_0_10px_rgba(255,255,255,0.1)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -80,10 +146,27 @@ export default function LoginPage() {
         </button>
 
         {error && (
-          <p className="text-red-400 text-sm mt-4 text-center bg-red-900/20 border border-red-700/30 p-2 rounded">
-            {error}
-          </p>
+          <div className="mt-4 p-3 rounded bg-red-900/20 border border-red-700/30 animate-pulse">
+            <p className="text-red-400 text-sm text-center flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </p>
+          </div>
         )}
+
+        <div className="mt-6 text-center">
+          <p className="text-gray-400 text-sm">
+            Pas encore de compte ?{' '}
+            <button
+              onClick={() => router.push('/signup')}
+              className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors underline"
+            >
+              S'inscrire
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   )

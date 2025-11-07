@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/footer'
 import LoginButton from './components/loginBoton'
 import LogoutButton from './components/LogoutButton'
+import ProfileButton from './components/profilButton'
 import { useUser, UserProvider } from './context/UserContext'
 import { getUserProfile } from './lib/profil'
 import { useRouter } from 'next/navigation'
@@ -16,7 +17,11 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) return
+    if (!user) {
+      setProfile(null)
+      return
+    }
+
     const fetchProfile = async () => {
       try {
         const data = await getUserProfile(user.id)
@@ -26,6 +31,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
         console.error('Erreur récupération profil :', message)
       }
     }
+
     fetchProfile()
   }, [user])
 
@@ -40,52 +46,46 @@ function LayoutContent({ children }: { children: ReactNode }) {
           'radial-gradient(circle at 20% 20%, rgba(0,255,246,0.08) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(0,217,163,0.08) 0%, transparent 40%)',
       }}
     >
-      {/* Barre supérieure */}
-      <Navbar />
+      {/* Navbar fixe en haut */}
+      <div className="fixed top-0 left-0 w-full z-40">
+        <Navbar />
+      </div>
 
-      {/* Zone utilisateur */}
-      <div className="absolute top-4 right-6 flex items-center gap-3">
+      {/* Zone utilisateur, au-dessus du contenu */}
+      <div className="fixed top-3 right-6 flex items-center gap-3 z-50">
         {!user ? (
           <LoginButton />
         ) : (
           <>
-            {profile?.avatar_url && (
-              <div
-                className="rounded-full p-[2px]"
-                style={{
-                  background:
-                    'linear-gradient(135deg, rgba(0,255,246,0.8), rgba(0,217,163,0.8))',
-                  boxShadow: '0 0 10px rgba(0,255,246,0.4)',
-                }}
-              >
-                <img
-                  src={profile.avatar_url}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
+            {/* Avatar et nom d’utilisateur */}
+            {profile && (
+              <div className="flex items-center gap-3">
+                {profile.avatar_url && (
+                  <div
+                    className="rounded-full p-[2px]"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(0,255,246,0.6), rgba(0,217,163,0.6))',
+                    }}
+                  >
+                    <img
+                      src={profile.avatar_url}
+                      alt="Avatar"
+                      className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                      onClick={() => router.push('/profile')}
+                      title="Voir le profil"
+                    />
+                  </div>
+                )}
+                {profile.username && (
+                  <span className="text-cyan-400 font-semibold tracking-wide hidden sm:inline">
+                    {profile.username}
+                  </span>
+                )}
               </div>
             )}
 
-            {profile?.username && (
-              <span className="text-cyan-400 font-semibold tracking-wide">
-                {profile.username}
-              </span>
-            )}
-
-            <button
-              onClick={() => router.push('/profile')}
-              className="text-[#0a0f14] font-bold px-4 py-1 rounded transition-transform duration-150"
-              style={{
-                background:
-                  'linear-gradient(90deg, #00fff6 0%, #00d9a3 100%)',
-                boxShadow: '0 0 10px rgba(0,255,246,0.6)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-            >
-              Profil
-            </button>
-
+            {/* Boutons profil et déconnexion */}
+            <ProfileButton />
             <LogoutButton />
           </>
         )}
@@ -93,11 +93,9 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
       {/* Contenu principal */}
       <main
-        className="flex-1 p-8"
+        className="flex-1 p-8 mt-24"
         style={{
-          marginTop: '3rem',
-          background:
-            'linear-gradient(to bottom right, rgba(0,255,246,0.04), rgba(0,217,163,0.03))',
+          background: 'linear-gradient(to bottom right, rgba(0,255,246,0.04), rgba(0,217,163,0.03))',
           boxShadow: 'inset 0 0 20px rgba(0,255,246,0.1)',
           borderRadius: '10px',
         }}
