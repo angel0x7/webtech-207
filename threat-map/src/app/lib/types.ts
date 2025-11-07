@@ -1,9 +1,10 @@
-
 export interface UserProfile {
   id: string
   username?: string
-  bio?: string
+  bio?: string              // ← ajoute ceci
   avatar_url?: string
-  theme?: 'light' | 'dark' | 'system'| 'theme'
+  theme?: string
   language?: string
+  created_at?: string
+  updated_at?: string
 }
