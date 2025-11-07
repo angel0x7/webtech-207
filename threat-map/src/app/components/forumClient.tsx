@@ -5,9 +5,7 @@ import { supabase } from "../config/supabaseClient";
 import QuestionCard from "./questionCard";
 import NewQuestion from "./newQuestion";
 
-type Profile = {
-  username: string | null;
-};
+type Profile = { username?: string | null };
 
 type SupabaseQuestionRow = {
   id: number;
@@ -24,7 +22,7 @@ type Question = {
   texte: string | null;
   created_at: string;
   idProfile: string | null;
-  profile?: { username?: string | null };
+  profile?: Profile;
 };
 
 export default function ForumClient() {
@@ -35,7 +33,7 @@ export default function ForumClient() {
   useEffect(() => {
     let mounted = true;
 
-    async function load() {
+    async function loadQuestions() {
       setLoading(true);
       try {
         const { data, error } = await supabase
@@ -50,10 +48,7 @@ export default function ForumClient() {
           `)
           .order("created_at", { ascending: false });
 
-        if (error) {
-          console.error("Supabase error:", error);
-          return;
-        }
+        if (error) throw error;
 
         if (mounted && data) {
           const normalized: Question[] = (data as SupabaseQuestionRow[]).map((q) => {
@@ -78,13 +73,13 @@ export default function ForumClient() {
           setQuestions(normalized);
         }
       } catch (err) {
-        console.error("Unexpected fetch error:", err);
+        console.error("Erreur lors du chargement :", err);
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
-    load();
+    loadQuestions();
     return () => {
       mounted = false;
     };
@@ -96,11 +91,11 @@ export default function ForumClient() {
   }
 
   return (
-    <section>
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-gray-600">Questions : {questions.length}</div>
+    <section className="p-6 min-h-screen bg-[#0b0d2b] text-gray-100">
+      <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+        <div className="text-sm text-gray-400">Questions : {questions.length}</div>
         <button
-          className="px-4 py-2 bg-green-600 text-white rounded"
+          className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white transition"
           onClick={() => setShowForm((s) => !s)}
         >
           {showForm ? "Fermer" : "Ajouter une question"}
@@ -114,14 +109,14 @@ export default function ForumClient() {
       )}
 
       {loading ? (
-        <p>Chargement…</p>
+        <p className="text-gray-400 animate-pulse">Chargement des questions…</p>
+      ) : questions.length === 0 ? (
+        <p className="text-gray-500">Aucune question pour le moment.</p>
       ) : (
         <div className="space-y-4">
-          {questions.length === 0 ? (
-            <div className="text-gray-500">Aucune question pour le moment.</div>
-          ) : (
-            questions.map((q) => <QuestionCard key={q.id} question={q} />)
-          )}
+          {questions.map((q) => (
+            <QuestionCard key={q.id} question={q} />
+          ))}
         </div>
       )}
     </section>
