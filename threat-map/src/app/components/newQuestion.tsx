@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "../config/supabaseClient"; 
 
 export default function NewQuestion({ onPosted }: { onPosted?: (q: any) => void }) {
   const [titre, setTitre] = useState("");
@@ -16,20 +17,25 @@ export default function NewQuestion({ onPosted }: { onPosted?: (q: any) => void 
     }
     setLoading(true);
     setError(null);
+
     try {
+      const { data: authData, error: authErr } = await supabase.auth.getUser();
+      if (authErr) throw new Error(authErr.message);
+      const user = authData?.user;
+      if (!user) throw new Error("Utilisateur non connecté");
+
       const res = await fetch("/api/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ titre, texte }),
+        body: JSON.stringify({ titre, texte, idProfile: user.id }),
       });
-      if (!res.ok) {
-        const payload = await res.json();
-        throw new Error(payload?.message || "Failed to post question");
-      }
-      const data = await res.json();
+
+      const payload = await res.json();
+      if (!res.ok) throw new Error(payload?.message || "Failed to post question");
+
       setTitre("");
       setTexte("");
-      if (onPosted) onPosted(data);
+      if (onPosted) onPosted(payload);
     } catch (err: any) {
       setError(err.message || "Unknown error");
     } finally {
@@ -40,24 +46,11 @@ export default function NewQuestion({ onPosted }: { onPosted?: (q: any) => void 
   return (
     <form onSubmit={handleSubmit} className="mb-4 space-y-2 p-4 border rounded bg-white">
       {error && <div className="text-red-600 text-sm">{error}</div>}
-      <input
-        value={titre}
-        onChange={(e) => setTitre(e.target.value)}
-        placeholder="Title"
-        className="w-full border rounded px-3 py-2"
-      />
-      <textarea
-        value={texte}
-        onChange={(e) => setTexte(e.target.value)}
-        placeholder="Describe your question"
-        className="w-full border rounded px-3 py-2"
-      />
+      <input value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Title" className="w-full border rounded px-3 py-2" />
+      <textarea value={texte} onChange={(e) => setTexte(e.target.value)} placeholder="Describe your question" className="w-full border rounded px-3 py-2" />
       <div className="flex gap-2">
         <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded" disabled={loading}>
           {loading ? "Posting…" : "Post question"}
-        </button>
-        <button type="button" className="px-4 py-2 bg-gray-200 rounded" onClick={() => { setTitre(""); setTexte(""); setError(null); }}>
-          Cancel
         </button>
       </div>
     </form>
