@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -12,7 +12,7 @@ type QuestionPayload = {
   idProfile?: string;
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const body = (await req.json()) as QuestionPayload;
     const { titre, texte, idProfile } = body;
@@ -38,6 +38,10 @@ export async function POST(req: NextRequest) {
       .insert(payload)
       .select()
       .single();
+
+    if (error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
 
     if (error) {
       return NextResponse.json({ message: error.message }, { status: 500 });
