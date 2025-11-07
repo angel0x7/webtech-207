@@ -1,5 +1,5 @@
+import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import type { NextApiRequest, NextApiResponse } from "next";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,22 +12,15 @@ interface QuestionPayload {
   idProfile?: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    res.status(405).json({ message: "Méthode non autorisée" });
-    return;
-  }
-
+export async function POST(req: Request) {
   try {
-    const { titre, texte, idProfile } = req.body as QuestionPayload;
+    const { titre, texte, idProfile } = (await req.json()) as QuestionPayload;
 
     if (!titre && !texte) {
-      res.status(400).json({ message: "titre ou texte requis" });
-      return;
+      return NextResponse.json({ message: "titre ou texte requis" }, { status: 400 });
     }
 
-    const payload: QuestionPayload = { titre: titre ?? undefined, texte: texte ?? undefined };
-    if (idProfile) payload.idProfile = idProfile;
+    const payload: QuestionPayload = { titre, texte, idProfile };
 
     const { data, error } = await supabase
       .from("question")
@@ -36,13 +29,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     if (error) {
-      res.status(500).json({ message: error.message });
-      return;
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
 
-    res.status(201).json(data);
+    return NextResponse.json(data, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur serveur";
-    res.status(500).json({ message });
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
