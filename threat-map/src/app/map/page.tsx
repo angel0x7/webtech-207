@@ -67,8 +67,8 @@ if (loading)
       <Image
         src="/honeyblog.png"
         alt="Chargement"
-        width={160} // équivalent à w-40
-        height={96} // équivalent à h-24
+        width={160} 
+        height={96} 
         className="mb-4 animate-pulse"
       />
       <p className="text-lg font-medium text-blue-400 animate-pulse">
@@ -86,11 +86,13 @@ if (loading)
 
 
   return (
-    <div className="p-6 text-gray-100 bg-[#0b0d2b] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-blue-400">Bad Hosts</h1>
+    <div className="p-6 text-gray-100 bg-[#0b0d2b] min-h-screen map-container"> {/* Use the new class */}
+      <h1 className="text-2xl font-bold mb-4 text-blue-400 text-center">Bad Hosts GLOBE</h1>
 
-      <div className="mb-8">
-        <Globe3D hosts={hosts} />
+      <div className="mb-11 "style={{ marginLeft: 200 }}>
+        <div className="mb-11 "style={{ marginRight: 300 }}>
+        <Globe3D />
+      </div>
       </div>
 
       <StatsPanel hosts={hosts} />

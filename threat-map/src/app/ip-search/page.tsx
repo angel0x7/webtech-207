@@ -335,7 +335,7 @@ export default function IPSearchPage(): React.JSX.Element {
   const riskClass = maliciousCount > 5 ? "text-red-400" : maliciousCount > 0 ? "text-yellow-300" : "text-green-400";
 
   return (
-    <main className="min-h-screen bg-[#0b0d2b] text-gray-100 p-8 font-sans">
+    <main className="min-h-screen bg-gradient-to-b from-[#050810] via-[#0a1429] to-[#0b0d2b] text-gray-100 p-8 font-[JetBrains_Mono]">
       <div className="mx-auto max-w-6xl">
         {/* Header / Search */}
         <div className="flex gap-4 items-center mb-6">
