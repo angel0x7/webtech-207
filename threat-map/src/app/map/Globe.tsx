@@ -20,7 +20,7 @@ interface Host {
 
 export default function Globe() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  //@typescript-eslint/no-explicit-any types nay not be available
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
   const globeObjRef = useRef<any>(null);
   const [hosts, setHosts] = useState<Host[]>([]);
 

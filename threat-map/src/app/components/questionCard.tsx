@@ -50,6 +50,7 @@ export default function QuestionCard({ question }: { question: Question }) {
         if (error) {
           setError(error.message ?? "Erreur en récupérant les réponses");
         } else if (mounted && data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
           const normalized = data.map((a: any) => ({
             id: a.id,
             texte: a.texte,
@@ -108,6 +109,7 @@ export default function QuestionCard({ question }: { question: Question }) {
 
       setAnswers((prev) => [...prev, normalized]);
       setShowForm(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
     } catch (err: any) {
       setError(err.message || "Erreur lors de l'envoi");
     } finally {

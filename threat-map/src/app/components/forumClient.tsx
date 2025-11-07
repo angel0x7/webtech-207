@@ -31,6 +31,7 @@ export default function ForumClient() {
           .order("created_at", { ascending: false });
 
         if (!error && data && mounted) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
           const normalized = data.map((q: any) => {
             const profileObj = Array.isArray(q.profiles) ? q.profiles[0] ?? null : q.profiles ?? null;
             return {
