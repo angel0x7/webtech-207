@@ -76,11 +76,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
                     />
                   </div>
                 )}
-                {profile.username && (
-                  <span className="text-cyan-400 font-semibold tracking-wide hidden sm:inline">
-                    {profile.username}
-                  </span>
-                )}
+                
               </div>
             )}
 
