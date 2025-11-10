@@ -40,24 +40,44 @@ npm run start  # start production (après build)
 
 Home page where you have access to the Attacks Map/Information and the IP scanner.
 
-<img width="2840" height="1529" alt="image" src="https://github.com/user-attachments/assets/09c05ebf-208f-4894-8f91-0745fb41b2a2" />
+<img width="2845" height="1521" alt="image" src="https://github.com/user-attachments/assets/257cc5d7-cd8d-4898-92ca-ccc78ef34805" />
 
 
-### Sign up Page
+### Sign in Page
 
 Simple sign up/log in page.
 
-<img width="2839" height="1525" alt="image" src="https://github.com/user-attachments/assets/d9898896-c509-493d-8569-e0b9c6833b94" />
+<img width="2834" height="1514" alt="image" src="https://github.com/user-attachments/assets/697b2713-0884-481a-9715-ce15b34d5303" />
 
 
 ### Attacks Information
-This page is a network analytics dashboard showing total events, unique hosts/IPs, a country distribution pie, a top‑IPs bar chart, and a detailed IP table with counts, last activity, and country. 
 
-<img width="2788" height="1522" alt="image" src="https://github.com/user-attachments/assets/f84cd88f-468b-43f8-84b7-b211e2ccd451" />
+This page begins with a globe showing the locations of recent vulnerabilities.
+
+<img width="2830" height="1532" alt="image" src="https://github.com/user-attachments/assets/4f1c5fbf-46d8-4964-945b-180099f780b2" />
+
+
+This page is also a network analytics dashboard showing total events, unique hosts/IPs, a country distribution pie, a top‑IPs bar chart, and a detailed IP table with counts, last activity, and country. 
+
+<img width="2774" height="1307" alt="image" src="https://github.com/user-attachments/assets/7c45c3d2-3fbe-493a-a252-763d4e7260af" />
 
 
 ### Ip Address Scannner
 
 A compact IP lookup tool: enter an IP (e.g., 185.24.96.105), click "Search" to view details, then export results, copy the entry, or block the IP directly from the interface.
 
-<img width="2849" height="1377" alt="image" src="https://github.com/user-attachments/assets/8e8db82d-8dc5-4ec6-8db6-3b007a70e507" />
+<img width="2853" height="795" alt="image" src="https://github.com/user-attachments/assets/1123cfd9-9d9c-4278-82dd-ad273747d925" />
+
+
+## CVE Registry
+
+This page lists the latest CVEs. 
+
+<img width="2819" height="1507" alt="image" src="https://github.com/user-attachments/assets/5ceef00f-c0f8-4f26-8800-1b3fc68d06e4" />
+
+
+## Forum Page
+
+On this page, users can ask questions about cybersecurity and many other topics. Anyone can answer questions, which enriches discussions within the community.
+
+<img width="2879" height="1076" alt="image" src="https://github.com/user-attachments/assets/db431fb6-9d08-43a7-bdf1-f9c84e81ebff" />
