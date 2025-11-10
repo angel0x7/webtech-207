@@ -30,9 +30,9 @@ export const SidebarData: SidebarItem[] = [
     cName: "nav-text",
   },
   {
-    title: "Statistics",
-    path: "/statistics",
-    icon: <IoIcons.IoIosStats />,    
+    title: "attack Techniques",
+    path: "/attack-techniques",
+    icon: <FaIcons.FaChartBar/>,    
     cName: "nav-text",
   },
   {
