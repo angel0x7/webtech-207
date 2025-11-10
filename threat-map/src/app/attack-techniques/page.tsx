@@ -36,7 +36,7 @@ export default function AttackTechniquesSearchPage() {
           MITRE ATT&CK Techniques
         </h1>
         <p className="text-gray-400 mb-8">
-          Recherchez et explorez les techniques d&aposattaque référencées par MITRE
+          Recherchez et explorez les techniques d&apos;attaque référencées par MITRE
         </p>
 
         {/* Formulaire de recherche */}

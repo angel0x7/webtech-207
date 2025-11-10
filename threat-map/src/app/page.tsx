@@ -91,7 +91,7 @@ export default function Home() {
           transition={{ duration: 0.9 }}
         >
           <h1 className="text-6xl md:text-7xl font-extrabold mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-green-400 to-emerald-300 drop-shadow-lg">
-            Threat<span className="text-green-400">Map</span>
+            Honey<span className="text-green-400">Blog</span>
           </h1>
 
           <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10">

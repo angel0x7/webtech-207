@@ -47,5 +47,11 @@ export const SidebarData: SidebarItem[] = [
     icon: <FaIcons.FaBomb />,         
     cName: "nav-text",
   },
+  {
+    title: "Sources",
+    path: "/sources",
+    icon: <FaIcons.FaSourcetree />,         
+    cName: "nav-text",
+  },
   
 ];
