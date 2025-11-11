@@ -43,3 +43,12 @@ body {
 .cyber-btn:hover {
   filter: brightness(1.2);
 }
+
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+label {
+  cursor: pointer;
+}

@@ -16,24 +16,26 @@ const Navbar: FC = () => {
   return (
     <IconContext.Provider value={{ color: "#d7f9f1" }}>
       {/* Barre supérieure fixée */}
-      <div className="fixed top-0 left-0 w-full z-800 bg-[#0a0f14] flex items-center justify-between px-6 py-3 shadow-md border-b border-cyan-900">
+      <div className="fixed top-0 left-0 w-full z-[800] bg-[#0a0f14] flex items-center justify-between px-6 py-3 shadow-md border-b border-cyan-900">
+        {/* Bouton menu gauche */}
         <button
           onClick={toggleSidebar}
           className="text-cyan-400 text-2xl focus:outline-none hover:text-cyan-300 transition-colors"
         >
           <FaIcons.FaBars />
         </button>
-        <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-1/2">
+
+        {/* Logo centré */}
+        <div className="flex-1 flex justify-center items-center">
           <Logo />
         </div>
 
-        {/* Espace réservé à droite pour garder le logo centré visuellement */}
-        <div className="w-8" />
+        
       </div>
 
       {/* Menu latéral */}
       <nav
-        className={`fixed top-13 left-0 h-full w-64 bg-[#0f161c] border-r border-cyan-900 transition-transform duration-300 z-50 ${
+        className={`fixed top-[56px] left-0 h-full w-64 bg-[#0f161c] border-r border-cyan-900 transition-transform duration-300 z-50 ${
           sidebar ? "translate-x-0" : "-translate-x-full"
         }`}
       >
