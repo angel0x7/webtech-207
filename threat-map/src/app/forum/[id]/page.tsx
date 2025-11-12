@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabaseClient";
 
 type Profile = {
@@ -24,6 +25,27 @@ type Question = {
   profile?: Profile;
 };
 
+type SupabaseProfileField =
+  | { username: string | null }
+  | { username: string | null }[]
+  | null;
+
+type SupabaseQuestionRow = {
+  id: number;
+  titre: string | null;
+  texte: string | null;
+  created_at: string;
+  profiles: SupabaseProfileField;
+};
+
+type SupabaseCommentRow = {
+  id: number;
+  texte: string;
+  created_at: string;
+  idProfile: string | null;
+  profiles: SupabaseProfileField;
+};
+
 export default function QuestionPage() {
   const { id } = useParams<{ id: string }>();
   const [question, setQuestion] = useState<Question | null>(null);
@@ -31,9 +53,8 @@ export default function QuestionPage() {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [posting, setPosting] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  // 🔹 Charger la question + commentaires
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -49,9 +70,9 @@ export default function QuestionPage() {
           profiles: idProfile ( username )
         `)
         .eq("id", id)
-        .single();
+        .single<SupabaseQuestionRow>();
 
-      if (qError) {
+      if (qError || !qData) {
         console.error(qError);
         setLoading(false);
         return;
@@ -64,8 +85,8 @@ export default function QuestionPage() {
         created_at: qData.created_at,
         profile: {
           username: Array.isArray(qData.profiles)
-            ? qData.profiles[0]?.username
-            : (qData.profiles as Profile)?.username,
+            ? qData.profiles[0]?.username ?? null
+            : qData.profiles?.username ?? null,
         },
       });
 
@@ -80,19 +101,20 @@ export default function QuestionPage() {
           profiles: idProfile ( username )
         `)
         .eq("idQuestion", id)
-        .order("created_at", { ascending: true });
+        .order("created_at", { ascending: true })
+        .returns<SupabaseCommentRow[]>();
 
       if (cError) console.error(cError);
 
-      const normalized = (cData || []).map((c) => ({
+      const normalized: Comment[] = (cData ?? []).map((c) => ({
         id: c.id,
         texte: c.texte,
         created_at: c.created_at,
         idProfile: c.idProfile,
         profile: {
           username: Array.isArray(c.profiles)
-            ? c.profiles[0]?.username
-            : (c.profiles as Profile)?.username,
+            ? c.profiles[0]?.username ?? null
+            : c.profiles?.username ?? null,
         },
       }));
 
@@ -104,11 +126,10 @@ export default function QuestionPage() {
 
     // Récupérer l’utilisateur connecté
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user || null);
+      setUser(data.user ?? null);
     });
   }, [id]);
 
-  // 🔹 Ajouter un commentaire
   async function handleAddComment(e: React.FormEvent) {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -132,9 +153,9 @@ export default function QuestionPage() {
         idProfile,
         profiles: idProfile ( username )
       `)
-      .single();
+      .single<SupabaseCommentRow>();
 
-    if (error) {
+    if (error || !data) {
       console.error(error);
       setPosting(false);
       return;
@@ -147,8 +168,8 @@ export default function QuestionPage() {
       idProfile: data.idProfile,
       profile: {
         username: Array.isArray(data.profiles)
-          ? data.profiles[0]?.username
-          : (data.profiles as Profile)?.username,
+          ? data.profiles[0]?.username ?? null
+          : data.profiles?.username ?? null,
       },
     };
 
@@ -181,7 +202,6 @@ export default function QuestionPage() {
           {new Date(question.created_at).toLocaleString("fr-FR")}
         </p>
 
-        {/* Commentaires */}
         <h2 className="text-lg font-semibold text-cyan-400 mb-3">
           Commentaires ({comments.length})
         </h2>
@@ -205,7 +225,6 @@ export default function QuestionPage() {
           )}
         </div>
 
-        {/* Formulaire d’ajout */}
         <form onSubmit={handleAddComment} className="flex flex-col gap-3">
           <textarea
             value={commentText}
@@ -214,6 +233,7 @@ export default function QuestionPage() {
             className="w-full rounded-md p-3 bg-gray-800 text-gray-100 border border-gray-700 focus:ring-2 focus:ring-cyan-500 outline-none resize-none"
             rows={3}
           />
+
           <button
             type="submit"
             disabled={posting}

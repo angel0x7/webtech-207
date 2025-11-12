@@ -13,7 +13,7 @@ type Question = {
 };
 
 type NewQuestionProps = {
-  onPosted?: (q: Question) => void;
+  onPosted?: (q: { id: number; titre: string | null; texte: string | null; created_at: string; profile?: { username?: string | null } }) => void;
 };
 
 export default function NewQuestion({ onPosted }: NewQuestionProps) {
