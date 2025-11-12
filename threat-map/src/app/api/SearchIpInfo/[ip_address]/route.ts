@@ -10,7 +10,7 @@ export async function GET(
   try {
     const res = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${ip_address}`, {
       headers: {
-        "x-apikey": process.env.VIRUSTOTAL_API_KEY ?? "",
+        "x-apikey": process.env.VirusTotal_API_Key ?? "",
       },
       cache: "no-store",
     });
