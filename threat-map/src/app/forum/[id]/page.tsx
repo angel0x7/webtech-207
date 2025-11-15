@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation"; // 👈 importer useRouter
+import { useParams, useRouter } from "next/navigation"; // importer useRouter
 import { supabase } from "../../config/supabaseClient";
 import QuestionCard from "../../components/questionCard";
 import { Question } from "../../types";
@@ -17,7 +17,7 @@ type SupabaseQuestionRow = {
 
 export default function QuestionPage() {
   const { id } = useParams();
-  const router = useRouter(); // 👈 hook pour naviguer
+  const router = useRouter(); //hook pour naviguer
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
 

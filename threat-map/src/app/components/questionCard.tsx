@@ -119,7 +119,6 @@ export default function QuestionCard({ question }: { question: Question }) {
     try {
       const res = await fetch(`/api/questions/${question.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression question");
-      // Option: callback vers parent pour enlever la carte, selon ton routing
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "Erreur inconnue");
@@ -149,8 +148,7 @@ export default function QuestionCard({ question }: { question: Question }) {
       if (!res.ok) throw new Error(updated?.message || "Erreur mise à jour question");
       // mettre à jour l’affichage
       setEditing(false);
-      // synchroniser la source question locale
-      // (si question est figée en prop, on garde les valeurs d’édition locales affichées)
+      // synchroniser la source question 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
