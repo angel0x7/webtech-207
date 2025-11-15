@@ -2,24 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../config/supabaseClient";
+import { Question, Answer } from "../types";
 
 type Profile = { username?: string | null };
-type Question = {
-  id: number;
-  titre: string | null;
-  texte: string | null;
-  created_at: string;
-  idProfile: string | null;
-  profile?: Profile;
-};
-type Answer = {
-  id: number;
-  texte: string;
-  created_at: string;
-  idProfile: string | null;
-  idQuestion: number;
-  profile?: Profile;
-};
 
 export default function QuestionCard({ question }: { question: Question }) {
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -27,6 +12,25 @@ export default function QuestionCard({ question }: { question: Question }) {
   const [loadingAnswers, setLoadingAnswers] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+
+  // états pour édition
+  const [editing, setEditing] = useState(false);
+  const [editTitre, setEditTitre] = useState(question.titre ?? "");
+  const [editTexte, setEditTexte] = useState(question.texte ?? "");
+  const [savingQuestion, setSavingQuestion] = useState(false);
+
+  const [editingAnswerId, setEditingAnswerId] = useState<number | null>(null);
+  const [editAnswerText, setEditAnswerText] = useState("");
+  const [savingAnswer, setSavingAnswer] = useState(false);
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    }
+    loadUser();
+  }, []);
 
   useEffect(() => {
     async function loadAnswers() {
@@ -48,7 +52,6 @@ export default function QuestionCard({ question }: { question: Question }) {
         if (error) throw error;
 
         if (data) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- external lib not typed
           const normalized: Answer[] = data.map((a: any) => ({
             id: a.id,
             texte: a.texte,
@@ -60,6 +63,8 @@ export default function QuestionCard({ question }: { question: Question }) {
               : a.profiles ?? undefined,
           }));
           setAnswers(normalized);
+        } else {
+          setAnswers([]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
@@ -110,16 +115,140 @@ export default function QuestionCard({ question }: { question: Question }) {
     }
   }
 
+  async function handleDeleteQuestion() {
+    try {
+      const res = await fetch(`/api/questions/${question.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression question");
+      // Option: callback vers parent pour enlever la carte, selon ton routing
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    }
+  }
+
+  async function handleDeleteAnswer(id: number) {
+    try {
+      const res = await fetch(`/api/commentaires/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression commentaire");
+      setAnswers((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    }
+  }
+
+  async function handleUpdateQuestion() {
+    try {
+      setSavingQuestion(true);
+      const res = await fetch(`/api/questions/${question.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ titre: editTitre, texte: editTexte }),
+      });
+      const updated = await res.json();
+      if (!res.ok) throw new Error(updated?.message || "Erreur mise à jour question");
+      // mettre à jour l’affichage
+      setEditing(false);
+      // synchroniser la source question locale
+      // (si question est figée en prop, on garde les valeurs d’édition locales affichées)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    } finally {
+      setSavingQuestion(false);
+    }
+  }
+
+  async function handleUpdateAnswer(id: number) {
+    try {
+      setSavingAnswer(true);
+      const res = await fetch(`/api/commentaires/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texte: editAnswerText }),
+      });
+      const updated = await res.json();
+      if (!res.ok) throw new Error(updated?.message || "Erreur mise à jour commentaire");
+      setAnswers((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, texte: updated.texte } : a))
+      );
+      setEditingAnswerId(null);
+      setEditAnswerText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    } finally {
+      setSavingAnswer(false);
+    }
+  }
+
   return (
     <article className="p-6 bg-gray-900/70 border border-gray-700 rounded-2xl shadow-lg text-gray-100">
-      <h3 className="text-lg font-semibold text-blue-400">{question.titre}</h3>
-      <p className="text-sm text-gray-300 mt-2">{question.texte}</p>
+      {/* Question */}
+      {editing ? (
+        <div className="space-y-2">
+          <input
+            value={editTitre}
+            onChange={(e) => setEditTitre(e.target.value)}
+            placeholder="Titre"
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700"
+          />
+          <textarea
+            value={editTexte}
+            onChange={(e) => setEditTexte(e.target.value)}
+            placeholder="Contenu"
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700"
+            rows={4}
+          />
+          <div className="flex gap-2">
+            <button
+              className="px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded"
+              onClick={handleUpdateQuestion}
+              disabled={savingQuestion}
+            >
+              {savingQuestion ? "Sauvegarde..." : "Sauvegarder"}
+            </button>
+            <button
+              className="px-3 py-1 bg-gray-600 hover:bg-gray-500 text-white rounded"
+              onClick={() => {
+                setEditing(false);
+                setEditTitre(question.titre ?? "");
+                setEditTexte(question.texte ?? "");
+              }}
+              disabled={savingQuestion}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <h3 className="text-lg font-semibold text-blue-400">{editTitre}</h3>
+          <p className="text-sm text-gray-300 mt-2">{editTexte}</p>
 
-      <div className="mt-3 text-xs text-gray-500">
-        Posté par <span className="text-blue-400">{question.profile?.username ?? "Anonyme"}</span> —{" "}
-        {new Date(question.created_at).toLocaleString()}
-      </div>
+          <div className="mt-3 text-xs text-gray-500">
+            Posté par <span className="text-blue-400">{question.profile?.username ?? "Anonyme"}</span> —{" "}
+            {new Date(question.created_at).toLocaleString()}
+          </div>
 
+          {user?.id === question.idProfile && (
+            <div className="mt-2 flex gap-2">
+              <button
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm"
+                onClick={() => setEditing(true)}
+              >
+                Modifier
+              </button>
+              <button
+                className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-sm"
+                onClick={handleDeleteQuestion}
+              >
+                Supprimer
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Formulaire de réponse */}
       <div className="mt-4 flex items-center gap-3">
         <button
           className="px-4 py-1.5 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium text-white transition"
@@ -138,6 +267,7 @@ export default function QuestionCard({ question }: { question: Question }) {
         </div>
       )}
 
+      {/* Liste des réponses */}
       <div className="mt-5 space-y-3">
         {loadingAnswers ? (
           <p className="text-sm text-gray-400">Chargement des réponses...</p>
@@ -149,15 +279,72 @@ export default function QuestionCard({ question }: { question: Question }) {
               key={a.id}
               className="p-3 bg-gray-800/60 border border-gray-700 rounded-lg"
             >
-              <p className="text-sm text-gray-200">{a.texte}</p>
-              <p className="mt-1 text-xs text-gray-500">
-                Par <span className="text-blue-400">{a.profile?.username ?? "Anonyme"}</span> —{" "}
-                {new Date(a.created_at).toLocaleString()}
-              </p>
+              {editingAnswerId === a.id ? (
+                <div className="space-y-2">
+                  <textarea
+                    value={editAnswerText}
+                    onChange={(e) => setEditAnswerText(e.target.value)}
+                    className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600"
+                    rows={3}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      className="px-2 py-1 bg-green-600 hover:bg-green-500 text-white rounded text-xs"
+                      onClick={() => handleUpdateAnswer(a.id)}
+                      disabled={savingAnswer}
+                    >
+                      {savingAnswer ? "Sauvegarde..." : "Sauvegarder"}
+                    </button>
+                    <button
+                      className="px-2 py-1 bg-gray-600 hover:bg-gray-500 text-white rounded text-xs"
+                      onClick={() => {
+                        setEditingAnswerId(null);
+                        setEditAnswerText("");
+                      }}
+                      disabled={savingAnswer}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-200">{a.texte}</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Par <span className="text-blue-400">{a.profile?.username ?? "Anonyme"}</span> —{" "}
+                    {new Date(a.created_at).toLocaleString()}
+                  </p>
+
+                  {user?.id === a.idProfile && (
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs"
+                        onClick={() => {
+                          setEditingAnswerId(a.id);
+                          setEditAnswerText(a.texte);
+                        }}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-xs"
+                        onClick={() => handleDeleteAnswer(a.id)}
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           ))
         )}
       </div>
+
+      {/* Erreur globale */}
+      {error && !showForm && (
+        <p className="mt-4 text-sm text-red-500">{error}</p>
+      )}
     </article>
   );
 }
