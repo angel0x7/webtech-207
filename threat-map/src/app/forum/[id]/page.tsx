@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation"; // 👈 importer useRouter
 import { supabase } from "../../config/supabaseClient";
 import QuestionCard from "../../components/questionCard";
 import { Question } from "../../types";
@@ -12,11 +12,12 @@ type SupabaseQuestionRow = {
   texte: string | null;
   created_at: string;
   idProfile: string | null;
-  profiles: { username: string | null } | null | { username: string | null }[]; // 👈 accepte tableau ou objet
+  profiles: { username: string | null } | null | { username: string | null }[];
 };
 
 export default function QuestionPage() {
   const { id } = useParams();
+  const router = useRouter(); // 👈 hook pour naviguer
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,13 +38,10 @@ export default function QuestionPage() {
 
       if (!error && data) {
         const row = data as SupabaseQuestionRow;
-        let username: string | null = null;
+        const username = Array.isArray(row.profiles)
+          ? row.profiles[0]?.username ?? null
+          : row.profiles?.username ?? null;
 
-        if (Array.isArray(row.profiles)) {
-          username = row.profiles[0]?.username ?? null;
-        } else {
-          username = row.profiles?.username ?? null;
-        }
         setQuestion({
           id: row.id,
           titre: row.titre,
@@ -62,6 +60,14 @@ export default function QuestionPage() {
 
   return (
     <main className="p-6 min-h-screen bg-[#0b0d2b] text-gray-100">
+      {/* Bouton retour */}
+      <button
+        onClick={() => router.push("/forum")}
+        className="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
+      >
+        ← Retour au forum
+      </button>
+
       {loading ? (
         <p className="text-gray-400 animate-pulse">Chargement de la question…</p>
       ) : question ? (
