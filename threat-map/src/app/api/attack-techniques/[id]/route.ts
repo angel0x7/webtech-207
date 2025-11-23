@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
+//
 type AttackTechniqueInfo = {
   x_mitre_detection?: string
   x_mitre_platforms?: string[]
