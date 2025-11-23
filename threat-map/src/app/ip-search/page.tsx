@@ -13,9 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 
-/* -----------------------
-   Types
-   ----------------------- */
+//Typage des données API
 type LastAnalysisStats = {
   malicious?: number;
   suspicious?: number;
@@ -57,25 +55,23 @@ type ApiData = {
   attributes?: Attributes;
 };
 
-/* -----------------------
-   Utils
-   ----------------------- */
+// Fonction de validation IP
 const isValidIP = (v: string) =>
   /^(25[0-5]|2[0-4]\d|1?\d{1,2})(\.(25[0-5]|2[0-4]\d|1?\d{1,2})){3}$/.test(v.trim());
 
-const downloadJSON = (obj: unknown, name = "vt-ip.json") => {
+const downloadJSON = (obj: unknown, name = "vt-ip.json") => { // Télécharger un objet JSON
   const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob); // Créer une URL pour le blob
   const a = document.createElement("a");
   a.href = url;
   a.download = name;
   a.click();
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(url); // Révoquer l'URL après le téléchargement
 };
 
-const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv") => {
+const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv") => { // Télécharger des données CSV
   if (!rows.length) return;
-  const keys = Object.keys(rows[0]);
+  const keys = Object.keys(rows[0]); // En-têtes des colonnes
   const csv = [keys.join(",")]
     .concat(
       rows.map((r) =>
@@ -94,9 +90,7 @@ const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv")
   URL.revokeObjectURL(url);
 };
 
-/* -----------------------
-   Subcomponents
-   ----------------------- */
+// Composant graphique du chart
 function DonutChart({ stats }: { stats: LastAnalysisStats }) {
   const total = Object.values(stats).reduce((s, v) => s + (Number(v ?? 0) || 0), 0) || 1;
   const slices = [
@@ -154,7 +148,7 @@ function DonutChart({ stats }: { stats: LastAnalysisStats }) {
   );
 }
 
-function EnginesTable({ results }: { results?: Record<string, EngineResult> }) {
+function EnginesTable({ results }: { results?: Record<string, EngineResult> }) { // Table des moteurs d'analyse
   const rows = useMemo(
     () =>
       Object.entries(results ?? {}).map(([engine, r]) => ({
@@ -238,7 +232,7 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
           <div className="text-xs text-gray-400 mt-1">{rdap?.name ?? ""}</div>
         </div>
         <div className="flex gap-2">
-          {rdap?.links?.slice?.(0, 3)?.map((l, i) => (
+          {rdap?.links?.slice?.(0, 2)?.map((l, i) => ( // Limiter à 2 liens RDAP
             <a key={i} href={l.href} target="_blank" rel="noreferrer" className="text-sm px-3 py-1 bg-gray-800 rounded flex items-center gap-2">
               <ExternalLink className="w-4 h-4" />
               RDAP
@@ -281,9 +275,7 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
 }
 
 
-/* -----------------------
-   Page principale
-   ----------------------- */
+// Composant principal de la page
 export default function IPSearchPage(): React.JSX.Element {
   const [ip, setIp] = useState<string>("");
   const [data, setData] = useState<ApiData | null>(null);

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Données des techniques populaires (exemples avec descriptions)
 const popularTechniques = [
   { id: 'T1110', name: 'Brute Force', description: 'Adversaries may use brute force techniques' },
   { id: 'T1059', name: 'Command and Scripting', description: 'Adversaries may abuse command' },
@@ -88,7 +89,7 @@ export default function AttackTechniquesSearchPage() {
             {popularTechniques.map((tech) => (
               <button
                 key={tech.id}
-                onClick={() => router.push(`/attack-techniques/${tech.id}`)}
+                onClick={() => router.push(`/attack-techniques/${tech.id}`)} // Navigation vers la page de la technique
                 className="p-4 rounded-lg text-left transition-all hover:scale-[1.02]"
                 style={{
                   backgroundColor: 'rgba(15, 23, 42, 0.6)',

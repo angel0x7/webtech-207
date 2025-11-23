@@ -26,14 +26,14 @@ interface NormalizedCVE {
 }
 
 export default function CVEPage() {
-  const [data, setData] = useState<CVERegistryItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<CVERegistryItem[]>([]); // Données du registre GCVE
+  const [loading, setLoading] = useState(false); // État de chargement
   const [error, setError] = useState('');
-  const [selectedCVE, setSelectedCVE] = useState<NormalizedCVE | null>(null);
+  const [selectedCVE, setSelectedCVE] = useState<NormalizedCVE | null>(null); // CVE sélectionné
   const [cveId, setCveId] = useState('');
 
   useEffect(() => {
-    fetchLatest();
+    fetchLatest();// Charger les derniers registres
   }, []);
 
   async function fetchLatest() {
@@ -67,12 +67,12 @@ export default function CVEPage() {
 
     try {
       if (isValidCVE) {
-        const res = await fetch(`/api/getCVEById?id=${encodeURIComponent(id)}`, { cache: 'no-store' });
+        const res = await fetch(`/api/getCVEById?id=${encodeURIComponent(id)}`, { cache: 'no-store' });// Appel API pour CVE officiel
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         const json: NormalizedCVE = await res.json();
         setSelectedCVE(json);
       } else {
-        const item = data.find((d) => d.id === id);
+        const item = data.find((d) => d.id === id); // Recherche dans le registre GCVE
         if (item) {
           setSelectedCVE({
             id: item.id,
@@ -146,7 +146,7 @@ export default function CVEPage() {
             boxShadow: '0 0 10px #00d9a3',
             transition: 'transform 0.2s',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}// Agrandir au survol
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
         >
           Rechercher

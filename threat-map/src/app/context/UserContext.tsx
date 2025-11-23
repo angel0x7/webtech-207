@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../config/supabaseClient'
 import type { User } from '@supabase/supabase-js'
 
+// Contexte utilisateur pour gérer l'authentification et le thème
 interface UserContextType {
   user: User | null
   signOut: () => Promise<void>
@@ -11,6 +12,7 @@ interface UserContextType {
   setTheme: (theme: string) => void
 }
 
+// Création du contexte
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export function UserProvider({ children }: { children: React.ReactNode }) {

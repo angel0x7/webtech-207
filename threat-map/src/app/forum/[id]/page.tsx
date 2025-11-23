@@ -8,7 +8,7 @@ import { supabase } from "../../config/supabaseClient";
 type Profile = {
   username: string | null;
 };
-
+// Commentaire avec profil utilisateur
 type Comment = {
   id: number;
   texte: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useCallback } from "react";
+// Recharts pour les graphiques
 import {
   PieChart,
   Pie,
@@ -16,7 +17,7 @@ import {
   Tooltip,
 } from "recharts";
 import type { PieLabelRenderProps } from "recharts";
-
+// Types pour les données des hôtes
 type GeoData = {
   city: string | null;
   country_iso: string | null;
