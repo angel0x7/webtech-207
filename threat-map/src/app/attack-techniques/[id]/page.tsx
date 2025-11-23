@@ -128,7 +128,7 @@ export default function AttackTechniquePage({ params }: AttackTechniquePageProps
         <div className="max-w-2xl w-full text-center">
           <div className="p-6 rounded-lg bg-red-900/20 border border-red-700/30">
             <svg
-              xmlns="http://www.w3.org/2000/svg" // SVG d'icône d'erreur
+              xmlns="http://www.w3.org/2000/svg" 
               className="h-16 w-16 mx-auto mb-4 text-red-400"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -165,7 +165,7 @@ export default function AttackTechniquePage({ params }: AttackTechniquePageProps
     )
   }
 
-  // No data state
+  // Affichage de la technique
   if (!technique) return null
 
   const tech = technique.data.attributes
@@ -364,7 +364,7 @@ export default function AttackTechniquePage({ params }: AttackTechniquePageProps
               viewBox="0 0 20 20"
               fill="currentColor"
             >
-              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /> // SVG d'icône de lien externe
+              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /> 
               <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" /> 
             </svg>
           </a>
