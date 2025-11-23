@@ -25,7 +25,7 @@ export default function ForumClient() {
   const router=useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [myQuestions, setMyQuestions] = useState<Question[]>([]);
-  const [selected, setSelected] = useState<Question | null>(null); // Etat de sélection
+  const [selected, setSelected] = useState<Question | null>(null); 
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,7 +67,7 @@ export default function ForumClient() {
 
         setQuestions(normalized);
         if (user) setMyQuestions(normalized.filter((q) => q.idProfile === user.id));
-        // Optionnel: sélectionner automatiquement la première
+        
         setSelected((prev) => prev ?? normalized[0] ?? null);
       }
 
@@ -81,7 +81,7 @@ export default function ForumClient() {
     setQuestions((prev) => [q, ...prev]);
     if (user && q.idProfile === user.id) setMyQuestions((prev) => [q, ...prev]);
     setShowForm(false);
-    setSelected(q); // sélectionner la nouvelle question
+    setSelected(q); 
   }
 
   async function handleDeleteQuestion(id: number) {
