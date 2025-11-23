@@ -29,12 +29,12 @@ export default function LoginPage() {
       }
 
       if (data.user) {
-        // Attendre que la session soit persistée
+       
         await new Promise(resolve => setTimeout(resolve, 300))
 
-        // Navigation React (pas de reload complet)
+       
         router.push('/')
-        router.refresh() // Force le refresh du layout pour mettre à jour UserContext
+        router.refresh() 
       }
     } catch (err) {
       setError('Une erreur inattendue est survenue')
@@ -59,7 +59,7 @@ export default function LoginPage() {
         setError(error.message)
         setLoading(false)
       }
-      // Pas besoin de setLoading(false) car la page va être redirigée
+      
     } catch (err) {
       setError('Erreur lors de la connexion GitHub')
       setLoading(false)

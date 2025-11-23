@@ -1,5 +1,5 @@
 'use client'
-
+// Layout principal de l’application avec gestion utilisateur et style global ainsi que la navbar fixe
 import { ReactNode, useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/footer'

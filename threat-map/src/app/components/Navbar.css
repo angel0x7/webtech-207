@@ -12,7 +12,7 @@
   z-index: 100;
 }
 
-/* Icône du menu burger */
+
 .menu-bars {
   margin-left: 2rem;
   font-size: 2rem;
@@ -26,7 +26,7 @@
   transform: scale(1.1);
 }
 
-/* Menu latéral */
+
 .nav-menu {
   background: #041014;
   width: 260px;
@@ -46,7 +46,7 @@
   transition: 0.4s ease-in-out;
 }
 
-/* Liens du menu */
+
 .nav-text {
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
   position: relative;
 }
 
-/* Effet de survol néon */
+
 .nav-text a:hover {
   background: rgba(0, 255, 246, 0.08);
   box-shadow: 0 0 10px rgba(0, 255, 246, 0.3);
@@ -79,13 +79,13 @@
   transform: translateX(4px);
 }
 
-/* Items du menu */
+
 .nav-menu-items {
   width: 100%;
   padding-top: 60px;
 }
 
-/* Bouton pour fermer le menu */
+
 .navbar-toggle {
   background: #04121a;
   width: 100%;

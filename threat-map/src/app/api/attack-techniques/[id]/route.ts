@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-//
+// Types pour la réponse de l'API VirusTotal
 type AttackTechniqueInfo = {
   x_mitre_detection?: string
   x_mitre_platforms?: string[]

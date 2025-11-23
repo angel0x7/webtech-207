@@ -59,9 +59,9 @@ export default function StatsPanel({ hosts }: { hosts: Host[] }) {
     barData,
   } = useMemo(() => {
     let totalEvents = 0;
-    const hostsSet = new Set<string>();
-    const countryMap = new Map<string, number>();
-    const ipMap = new Map<string, number>();
+    const hostsSet = new Set<string>();// Pour les hôtes uniques
+    const countryMap = new Map<string, number>();// Pour compter les événements par pays
+    const ipMap = new Map<string, number>();//  Pour compter les événements par IP
 
     hosts.forEach((h) => {
       const cnt = Number(h.count ?? 1) || 1;
@@ -85,7 +85,7 @@ export default function StatsPanel({ hosts }: { hosts: Host[] }) {
       top.map((c) => ({ name: c.country, value: c.value })) //
         .concat(otherSum > 0 ? [{ name: "Other", value: otherSum }] : []);
 
-    const ipsArr = Array.from(ipMap.entries())
+    const ipsArr = Array.from(ipMap.entries()) 
       .map(([ip, value]) => ({ ip, value }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 10);
@@ -100,7 +100,7 @@ export default function StatsPanel({ hosts }: { hosts: Host[] }) {
     };
   }, [hosts]);
 
-  const renderPieLabel = useCallback(
+  const renderPieLabel = useCallback( //  callback pour le rendu des étiquettes du graphique circulaire
     (entry: PieLabelRenderProps) => {
     
       const value = (entry as PieLabelRenderProps & { value?: number }).value ?? 0;
@@ -110,7 +110,7 @@ export default function StatsPanel({ hosts }: { hosts: Host[] }) {
     },
     [totalEvents]
   );
-
+// Rendu du panneau de statistiques
   return (
     <div className="w-full mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
  

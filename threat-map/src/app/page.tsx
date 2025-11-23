@@ -8,7 +8,7 @@ export default function Home() {
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // --- Animation du réseau de particules ---
+// Animation de fond avec des particules connectées
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -18,10 +18,10 @@ export default function Home() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    const particles: { x: number; y: number; vx: number; vy: number }[] = []; // Tableau des particules et leurs vitesses
     const num = 120;
 
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < num; i++) { // Initialisation des particules avec positions et vitesses aléatoires
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -30,25 +30,25 @@ export default function Home() {
       });
     }
 
-    const draw = () => {
+    const draw = () => { // Fonction de dessin des particules et des connexions entre elles  
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = "rgba(0, 255, 200, 0.5)";
       ctx.strokeStyle = "rgba(0, 255, 150, 0.2)";
       ctx.lineWidth = 0.5;
 
-      for (let i = 0; i < num; i++) {
+      for (let i = 0; i < num; i++) { // Mise à jour des positions des particules et dessin 
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.x < 0 || p.x > width) p.vx *= -1; // Rebondir sur les bords 
         if (p.y < 0 || p.y > height) p.vy *= -1;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2); // Dessiner la particule
         ctx.fill();
 
-        for (let j = i + 1; j < num; j++) {
+        for (let j = i + 1; j < num; j++) { // Dessiner les lignes entre particules proches 
           const q = particles[j];
           const dx = p.x - q.x;
           const dy = p.y - q.y;
@@ -63,19 +63,19 @@ export default function Home() {
           }
         }
       }
-      requestAnimationFrame(draw);
+      requestAnimationFrame(draw); // Boucle d’animation 
     };
     draw();
 
-    const resize = () => {
+    const resize = () => { // Gérer le redimensionnement de la fenêtre
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize); // Écouteur d’événement de redimensionnement
     return () => window.removeEventListener("resize", resize);
   }, []);
 
-  // --- Page ---
+// Rendu du composant principal de la page d’accueil
   return (
     <main className="relative min-h-screen w-full overflow-hidden text-white">
       <canvas

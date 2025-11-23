@@ -1,5 +1,5 @@
 import { supabase } from '../config/supabaseClient'
-
+// Définition du type UserProfile
 export interface UserProfile {
   id: string
   username?: string
@@ -10,7 +10,7 @@ export interface UserProfile {
   created_at?: string
   updated_at?: string
 }
-
+// Récupère le profil utilisateur par ID
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   const { data, error } = await supabase
     .from('profiles')
@@ -21,7 +21,7 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
   if (error) throw error
   return data
 }
-
+// Met à jour ou insère le profil utilisateur
 export const upsertUserProfile = async (profile: UserProfile): Promise<UserProfile | null> => {
   const { data, error } = await supabase
     .from('profiles')
@@ -38,7 +38,7 @@ export const upsertUserProfile = async (profile: UserProfile): Promise<UserProfi
   return null
 }
 
-
+// Upload l'avatar utilisateur et retourne l'URL publique
 export const uploadAvatar = async (userId: string, file: File): Promise<string> => {
   const fileExt = file.name.split('.').pop()
   const filePath = `${userId}/avatar.${fileExt}`

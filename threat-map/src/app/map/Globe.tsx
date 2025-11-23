@@ -24,7 +24,7 @@ export default function Globe() {
   const globeObjRef = useRef<any>(null);
   const [hosts, setHosts] = useState<Host[]>([]);
 
-
+// Récupération des données des hôtes malveillants
   useEffect(() => {
     async function fetchHosts() {
       try {
@@ -44,13 +44,13 @@ export default function Globe() {
     let isMounted = true;
 
     async function initGlobe() {
-      const { default: ThreeGlobe } = await import("three-globe");
+      const { default: ThreeGlobe } = await import("three-globe"); // Import dynamique de ThreeGlobe
       if (!isMounted || !containerRef.current) return;
       const container = containerRef.current;
       container.innerHTML = "";
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
+      const scene = new THREE.Scene(); // Création de la scène Three.js
+      const camera = new THREE.PerspectiveCamera(// Caméra perspective tournée vers le globe
         45,
         container.clientWidth / container.clientHeight,
         0.1,
@@ -58,7 +58,7 @@ export default function Globe() {
       );
       camera.position.set(0, 0, 300);
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Rendu WebGL avec fond transparent
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setClearColor(0x000000, 0); 
       container.appendChild(renderer.domElement);
@@ -70,8 +70,8 @@ export default function Globe() {
       controls.update();
 
       const globe = new ThreeGlobe()
-        .globeImageUrl("//unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
-        .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png")
+        .globeImageUrl("//unpkg.com/three-globe/example/img/earth-blue-marble.jpg") // url de la texture du globe
+        .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png") //png de relief
         .showAtmosphere(true)
         .atmosphereColor("#3a9ad9");
 
@@ -87,7 +87,7 @@ export default function Globe() {
       globeObjRef.current = globe;
 
       const animate = () => {
-        globe.rotation.y += 0.002;
+        globe.rotation.y += 0.002;// Rotation lente du globe
         controls.update();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
@@ -118,12 +118,12 @@ export default function Globe() {
   }, []);
 
 
-  useEffect(() => {
+  useEffect(() => { // Mise à jour des points sur le globe lorsque les hôtes changent
     const globe = globeObjRef.current;
     if (!globe || !hosts.length) return;
 
     const points = hosts
-      .filter((h) => h.geo?.latitude && h.geo?.longitude)
+      .filter((h) => h.geo?.latitude && h.geo?.longitude) // Filtrer les hôtes avec des coordonnées valides
       .map((h) => ({
         lat: h.geo!.latitude!,
         lng: h.geo!.longitude!,
@@ -137,7 +137,7 @@ export default function Globe() {
     globe.pointAltitude("size");
     globe.pointColor("color");
   }, [hosts]);
-
+// Rendu du conteneur du globe
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <div ref={containerRef} className="absolute inset-0 z-0" />

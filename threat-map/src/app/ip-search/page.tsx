@@ -76,13 +76,13 @@ const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv")
     .concat(
       rows.map((r) =>
         keys
-          .map((k) => `"${String(r[k] ?? "").replace(/"/g, '""')}"`)
+          .map((k) => `"${String(r[k] ?? "").replace(/"/g, '""')}"`) // anti bug guillemets
           .join(",")
       )
     )
     .join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // CSV création
+  const url = URL.createObjectURL(blob); // blob :Binary Large Object
   const a = document.createElement("a");
   a.href = url;
   a.download = name;
@@ -92,7 +92,7 @@ const downloadCSV = (rows: Array<Record<string, unknown>>, name = "engines.csv")
 
 // Composant graphique du chart
 function DonutChart({ stats }: { stats: LastAnalysisStats }) {
-  const total = Object.values(stats).reduce((s, v) => s + (Number(v ?? 0) || 0), 0) || 1;
+  const total = Object.values(stats).reduce((s, v) => s + (Number(v ?? 0) || 0), 0) || 1; // éviter division par 0
   const slices = [
     { label: "malicious", value: stats.malicious ?? 0, color: "#ef4444" },
     { label: "suspicious", value: stats.suspicious ?? 0, color: "#f59e0b" },
@@ -149,7 +149,7 @@ function DonutChart({ stats }: { stats: LastAnalysisStats }) {
 }
 
 function EnginesTable({ results }: { results?: Record<string, EngineResult> }) { // Table des moteurs d'analyse
-  const rows = useMemo(
+  const rows = useMemo( // optimisation des performances
     () =>
       Object.entries(results ?? {}).map(([engine, r]) => ({
         engine,
@@ -219,7 +219,7 @@ function EnginesTable({ results }: { results?: Record<string, EngineResult> }) {
   );
 }
 
-function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
+function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) { // Panneau RDAP + WHOIS
   const [openWhois, setOpenWhois] = useState<boolean>(false);
   const events = rdap?.events ?? [];
 
@@ -246,11 +246,11 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
 
       {events.length > 0 && (
         <div className="text-sm">
-          <div className="text-gray-400">Events</div>
+          <div className="text-gray-400">Events</div> 
           <ul className="list-disc ml-5 mt-2 text-xs text-gray-300">
             {events.map((e, i) => (
               <li key={i}>
-                {e.event_action ?? "N/A"} — {e.event_date ? new Date(e.event_date).toLocaleString() : "N/A"}
+                {e.event_action ?? "N/A"} — {e.event_date ? new Date(e.event_date).toLocaleString() : "N/A"} 
               </li>
             ))}
           </ul>
@@ -276,7 +276,7 @@ function RDAPPanel({ rdap, whois }: { rdap?: RDAP; whois?: string }) {
 
 
 // Composant principal de la page
-export default function IPSearchPage(): React.JSX.Element {
+export default function IPSearchPage(): React.JSX.Element { // JavaScript XML
   const [ip, setIp] = useState<string>("");
   const [data, setData] = useState<ApiData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

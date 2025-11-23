@@ -14,7 +14,7 @@ export default function SignupPage() {
     e.preventDefault()
     setError(null)
     setSuccess(false)
-
+// Inscription de l'utilisateur avec Supabase
     const { error } = await supabase.auth.signUp({
       email,
       password,

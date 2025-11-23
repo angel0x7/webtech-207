@@ -57,7 +57,7 @@ export default function ProfilePage() {
     fetchProfile()
   }, [user, setTheme])
 
-  // Changement de langue
+  // Changement de langue test 
   useEffect(() => {
     i18n.changeLanguage(language)
   }, [language, i18n])
@@ -133,7 +133,7 @@ export default function ProfilePage() {
     }
   }
 
-  // Loading state
+// Affichage pendant le chargement
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950">
@@ -145,7 +145,7 @@ export default function ProfilePage() {
     )
   }
 
-  // Not logged in (will redirect but show message briefly)
+// Invitation à se connecter si non authentifié
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950">

@@ -1,7 +1,7 @@
 export interface UserProfile {
   id: string
   username?: string
-  bio?: string              // ← ajoute ceci
+  bio?: string              
   avatar_url?: string
   theme?: string
   language?: string

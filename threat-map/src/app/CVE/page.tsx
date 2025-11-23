@@ -35,7 +35,7 @@ export default function CVEPage() {
   useEffect(() => {
     fetchLatest();// Charger les derniers registres
   }, []);
-
+// Fonction pour récupérer les derniers registres GCVE
   async function fetchLatest() {
     setLoading(true);
     setError('');
@@ -51,7 +51,7 @@ export default function CVEPage() {
       setLoading(false);
     }
   }
-
+// Fonction pour récupérer un CVE par ID
   async function fetchCVEById(idParam?: string) {
     const id = idParam || cveId.trim();
     if (!id) {
@@ -63,7 +63,7 @@ export default function CVEPage() {
     setError('');
     setSelectedCVE(null);
 
-    const isValidCVE = /^CVE-\d{4}-\d+$/i.test(id);
+    const isValidCVE = /^CVE-\d{4}-\d+$/i.test(id); // Validation format CVE
 
     try {
       if (isValidCVE) {
