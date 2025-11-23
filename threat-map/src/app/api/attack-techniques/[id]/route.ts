@@ -68,7 +68,7 @@ export async function GET(
     }
 
     // Vérifier la clé API
-    const apiKey = process.env.VIRUSTOTAL_API_KEY
+    const apiKey = process.env.VirusTotal_API_Key
 
     if (!apiKey) {
       return NextResponse.json(

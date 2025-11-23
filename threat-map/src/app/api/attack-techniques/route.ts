@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const cursor = searchParams.get('cursor')
 
-    const apiKey = process.env.VIRUSTOTAL_API_KEY
+    const apiKey = process.env.VirusTotal_API_Key
 
     if (!apiKey) {
       return NextResponse.json(
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     const response = await fetch(url, {
       headers: {
-        'x-apikey': process.env.VIRUSTOTAL_API_KEY ?? "",
+        'x-apikey': process.env.VirusTotal_API_Key ?? "",
         'Accept': 'application/json',
       },
       next: { revalidate: 3600 },
