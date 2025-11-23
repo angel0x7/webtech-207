@@ -6,6 +6,7 @@ import NewQuestion from "../components/newQuestion";
 import QuestionCard from "../components/questionCard";
 import { Question, Answer } from "../types";
 import { useRouter } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 
 // Types
 type Profile = { username: string | null };
@@ -28,7 +29,7 @@ export default function ForumClient() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -138,7 +139,6 @@ export default function ForumClient() {
                       className="px-3 py-1 bg-blue-600 text-white rounded text-xs"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // ici tu peux déclencher une modale d’édition ou un inline edit
                       }}
                     >
                       Modifier

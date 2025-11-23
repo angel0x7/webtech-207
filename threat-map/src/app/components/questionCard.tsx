@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../config/supabaseClient";
 import { Question, Answer } from "../types";
+import { User } from "@supabase/supabase-js";
 
 type Profile = { username?: string | null };
 
@@ -13,7 +14,7 @@ export default function QuestionCard({ question }: { question: Question }) {
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   // états pour édition
   const [editing, setEditing] = useState(false);
