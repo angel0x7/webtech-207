@@ -27,6 +27,7 @@ export default function ForumClient() {
   const [selected, setSelected] = useState<Question | null>(null); // Etat de sélection
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {

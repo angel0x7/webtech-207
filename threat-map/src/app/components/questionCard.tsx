@@ -12,6 +12,7 @@ export default function QuestionCard({ question }: { question: Question }) {
   const [loadingAnswers, setLoadingAnswers] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
 
   // états pour édition
@@ -52,6 +53,7 @@ export default function QuestionCard({ question }: { question: Question }) {
         if (error) throw error;
 
         if (data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const normalized: Answer[] = data.map((a: any) => ({
             id: a.id,
             texte: a.texte,
