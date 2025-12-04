@@ -45,30 +45,30 @@ La sécurité est implémentée par défaut via les politiques **Row Level Secur
 
 ## 3. Auto-Évaluation des Tâches
 
-| Tâche | Cat. | Points | Statut | Commentaire Concis (Implémentation) |
-| :--- | :--- | :--- | :--- | :--- |
-| **User Authentication** | Fun. | M | ✅ Terminé | Implémentation OAuth2 via le provider **GitHub** de Supabase, gérée sur la page `/signin`. |
-| **Content Management** | Fun. | H | ✅ Terminé | Listes de publication (CVE Registry et Forum) implémentées. **TODO :** Finalisation de la page de création de posts (`/create`). |
-| **Community Interaction** | Fun. | M | ✅ Terminé | Le Forum permet des discussions communautaires. Logique des commentaires prête pour être étendue aux posts d'analyse. |
-| **Navigation** | Dev | E | ✅ Terminé | Navigation globale et responsive, avec partage du layout. |
-| **User Profile** | Fun. | M | ✅ Terminé | La page `/profile` affiche et permet l'édition (non persistée pour l'instant) des informations utilisateur. |
-| **Project structure** | Man. | E | ✅ Terminé | Structure claire (`app/`, `components/`). Utilisation de conventions de nommage standards. |
-| **Git usage** | Man. | E | ✅ Terminé | Historique de commits propre, respectant les **Conventional Commits** (`feat`, `fix`, `chore`). |
-| **Code quality** | Man. | M | ✅ Terminé | Utilisation de linter/formatter (ESLint/Prettier) et de TypeScript pour la robustesse. |
-| **Design, UX, and content** | Man. | M | ✅ Terminé | Thème sombre professionnel, design responsive. |
-| **Post modification/removal** | Dev | M | ✅ Partiel | Les boutons sont implémentés et visibles uniquement par l'auteur (via vérification de l'`user_id`). |
-| **Resource access control (RLS)** | Dev | H | ✅ Terminé | Politiques RLS définies sur la table `profiles` et initialisées sur les tables `posts`/`comments`. |
-| **WYSIWYG integration** | Dev | E | ✅ Terminé | Un éditeur de contenu riche est intégré dans les formulaires de création de contenu du Forum. |
-| **Gravatar integration** | Dev | E | ✅ Partiel | Affichage de l'icône **Gravatar** dans le header et à côté des contributions utilisateur. |
-| **Light/dark mode** | Dev | E | ✅ Terminé | Bascule de thème via Tailwind CSS et persistance de la préférence utilisateur. |
+| Tâche | Cat. | Statut | Commentaire (Implémentation) |
+| :--- | :--- | :--- | :--- |
+| **User Authentication** | Fun. | ✅ Terminé | Implémentation OAuth2 via le provider **GitHub** de Supabase, gérée sur la page `/signin`. |
+| **Content Management** | Fun. | ✅ Terminé | Listes de publication (CVE Registry et Forum) implémentées. **TODO :** Finalisation de la page de création de posts (`/create`). |
+| **Community Interaction** | Fun. | ✅ Terminé | Le Forum permet des discussions communautaires. Logique des commentaires prête pour être étendue aux posts d'analyse. |
+| **Navigation** | Dev | ✅ Terminé | Navigation globale et responsive, avec partage du layout. |
+| **User Profile** | Fun. | ✅ Terminé | La page `/profile` affiche et permet l'édition (non persistée pour l'instant) des informations utilisateur. |
+| **Project structure** | Man. | ✅ Terminé | Structure claire (`app/`, `components/`). Utilisation de conventions de nommage standards. |
+| **Git usage** | Man. | ✅ Terminé | Historique de commits propre, respectant les **Conventional Commits** (`feat`, `fix`, `chore`). |
+| **Code quality** | Man. | ✅ Terminé | Utilisation de linter/formatter (ESLint/Prettier) et de TypeScript pour la robustesse. |
+| **Design, UX, and content** | Man. | ✅ Terminé | Thème sombre professionnel, design responsive. |
+| **Post modification/removal** | Dev | ✅ Partiel | Les boutons sont implémentés et visibles uniquement par l'auteur (via vérification de l'`user_id`). |
+| **Resource access control (RLS)** | Dev | ✅ Terminé | Politiques RLS définies sur la table `profiles` et initialisées sur les tables `posts`/`comments`. |
+| **WYSIWYG integration** | Dev | ✅ Terminé | Un éditeur de contenu riche est intégré dans les formulaires de création de contenu du Forum. |
+| **Gravatar integration** | Dev | ✅ Partiel | Affichage de l'icône **Gravatar** dans le header et à côté des contributions utilisateur. |
+| **Light/dark mode** | Dev | ✅ Terminé | Bascule de thème via Tailwind CSS et persistance de la préférence utilisateur. |
 
 ---
 
-## 4. Fonctionnalités Bonus (Beyond Core Requirements)
+## 4. Fonctionnalités Bonus 
 
-Les fonctionnalités suivantes (visibles sur les captures d'écran) enrichissent l'application et dépassent le cahier des charges d'une plateforme de publication standard :
+Les fonctionnalités suivantes enrichissent l'application et dépassent le cahier des charges d'une plateforme de publication standard :
 
-* **Analyse de Menaces en Temps Réel :** Intégration d'un **Scanner IP** performant (`/scanner`) utilisant des APIs externes.
+* **Analyse de Menaces en Temps Réel :** Intégration d'un **Scanner IP** performant  utilisant des APIs externes.
 * **Cartographie 3D :** Affichage d'une **Carte des Attaques** (globe) pour la visualisation géographique des menaces.
-* **Tableau de Bord Analytique :** Page `/attacks-information` affichant des métriques et des graphiques (Top IPs, Distribution Pays) non requis.
+* **Tableau de Bord Analytique :** Page  affichant des métriques et des graphiques (Top IPs, Distribution Pays) non requis.
 * **API Externe :** L'utilisation de multiples APIs de sécurité (WHOIS, moteurs de verdicts) pour le scanner IP va au-delà de l'exigence d'une seule API externe.
